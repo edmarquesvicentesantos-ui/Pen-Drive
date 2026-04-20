@@ -14,7 +14,35 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 let carrinho = [];
 
-// --- FUNÇÃO WHATSAPP ---
+// --- EXPORTAR ESTOQUE PARA BACKUP ---
+window.exportarEstoque = async () => {
+    const snap = await getDocs(collection(db, "estoque"));
+    const dados = [];
+    snap.forEach(d => dados.push(d.data()));
+    const blob = new Blob([JSON.stringify(dados, null, 2)], {type: "application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `estoque_boteco934_${new Date().toLocaleDateString()}.json`;
+    a.click();
+};
+
+// --- IMPORTAR LISTA ---
+document.getElementById('arquivoImportar').addEventListener('change', function(e) {
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+        try {
+            const produtos = JSON.parse(event.target.result);
+            for (const p of produtos) {
+                await addDoc(collection(db, "estoque"), p);
+            }
+            alert("Produtos importados com sucesso! 🚀");
+        } catch (err) { alert("Erro ao ler arquivo: " + err.message); }
+    };
+    reader.readAsText(e.target.files[0]);
+});
+
+// --- WHATSAPP ---
 function enviarRecibo(cliente, itens, total, tipo) {
     let msg = `*Boteco 934 - Recibo*%0ACliente: ${cliente}%0A------------------%0A`;
     itens.forEach(i => msg += `${i.qtd}x ${i.nome} - R$ ${i.subtotal.toFixed(2)}%0A`);
@@ -22,16 +50,7 @@ function enviarRecibo(cliente, itens, total, tipo) {
     window.open(`https://wa.me/?text=${msg}`, '_blank');
 }
 
-// --- BAIXAR PENDURA ---
-window.receberPendura = async (id, nome) => {
-    const met = prompt(`Como ${nome} pagou? (Pix, Dinheiro ou Cartão)`);
-    if (met && ["Pix", "Dinheiro", "Cartão"].includes(met)) {
-        await updateDoc(doc(db, "vendas", id), { pagamento: met });
-        alert("Pagamento registrado!");
-    }
-};
-
-// --- BIPAR ---
+// --- LOGICA DE VENDA (BIPAR) ---
 document.getElementById('biparVenda').addEventListener('change', async (e) => {
     const code = e.target.value.trim();
     if (!code) return;
@@ -53,12 +72,11 @@ function renderizarCarrinho() {
     document.getElementById('total-venda-valor').innerText = `R$ ${carrinho.reduce((a, b) => a + b.subtotal, 0).toFixed(2)}`;
 }
 
-// --- FINALIZAR ---
 window.finalizarVenda = async () => {
     const cliente = document.getElementById('identificacaoCliente').value.toUpperCase();
     const pag = document.getElementById('metodoPagamento').value;
     const total = carrinho.reduce((a, b) => a + b.subtotal, 0);
-    if (!cliente || total === 0) return alert("Falta o nome ou itens!");
+    if (!cliente || total === 0) return alert("Erro nos dados!");
 
     for (const item of carrinho) {
         const ref = doc(db, "estoque", item.idBanco);
@@ -66,21 +84,16 @@ window.finalizarVenda = async () => {
         if (s.exists()) await updateDoc(ref, { estoqueAtual: s.data().estoqueAtual - item.qtd });
     }
     await addDoc(collection(db, "vendas"), { cliente, pagamento: pag, total, itens: carrinho, data: new Date() });
-    if (confirm("Deseja enviar o recibo pelo WhatsApp?")) enviarRecibo(cliente, carrinho, total, pag);
+    if (confirm("Enviar recibo?")) enviarRecibo(cliente, carrinho, total, pag);
     carrinho = []; renderizarCarrinho(); document.getElementById('identificacaoCliente').value = "";
 };
 
-// --- ATUALIZAÇÕES AUTOMÁTICAS ---
+// --- SINCRONIZAÇÃO EM TEMPO REAL ---
 onSnapshot(collection(db, "vendas"), (s) => {
     let t = { Pix: 0, Dinheiro: 0, Cartão: 0, Pendura: 0 };
-    const lp = document.getElementById('lista-penduras');
-    lp.innerHTML = "";
     s.forEach(d => {
         const v = d.data();
         if (t[v.pagamento] !== undefined) t[v.pagamento] += v.total;
-        if (v.pagamento === "Pendura") {
-            lp.innerHTML += `<li><span>${v.cliente}: R$ ${v.total.toFixed(2)}</span> <button class="btn-receber" onclick="receberPendura('${d.id}', '${v.cliente}')">RECEBER</button></li>`;
-        }
     });
     document.getElementById('faturamento-pix').innerText = `R$ ${t.Pix.toFixed(2)}`;
     document.getElementById('faturamento-dinheiro').innerText = `R$ ${t.Dinheiro.toFixed(2)}`;
@@ -95,7 +108,7 @@ onSnapshot(collection(db, "estoque"), (s) => {
         const p = d.data();
         const porc = (p.estoqueAtual / p.rendimento) * 100;
         g.innerHTML += `<div class="card-estoque">
-            <div style="display:flex; justify-content:space-between; font-size:14px;"><span>${p.nome}</span><span>${p.estoqueAtual} doses</span></div>
+            <div style="display:flex; justify-content:space-between; font-size:13px;"><span>${p.nome}</span><span>${p.estoqueAtual} doses</span></div>
             <div class="barra-fora"><div class="barra-dentro" style="width:${porc}%; background:${porc < 25 ? '#ff5e5e' : '#1fcc7d'}"></div></div>
         </div>`;
     });
@@ -108,18 +121,5 @@ window.salvarProduto = async () => {
     const rend = parseInt(document.getElementById('qtdDoses').value) || 1;
     const cod = document.getElementById('codigoBarra').value.trim();
     await addDoc(collection(db, "estoque"), { nome, precoVenda: preco, custoGarrafa: custo, rendimento: rend, estoqueAtual: rend, codigo: cod, data: new Date() });
-    alert("Cadastrado!");
-};
-window.exportarProdutos = async () => {
-    const q = query(collection(db, "estoque"));
-    const snap = await getDocs(q);
-    const produtos = [];
-    snap.forEach(doc => produtos.push(doc.data()));
-    
-    const blob = new Blob([JSON.stringify(produtos, null, 2)], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'estoque_boteco934.json';
-    a.click();
+    alert("Salvo!");
 };
