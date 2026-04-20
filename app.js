@@ -110,3 +110,16 @@ window.salvarProduto = async () => {
     await addDoc(collection(db, "estoque"), { nome, precoVenda: preco, custoGarrafa: custo, rendimento: rend, estoqueAtual: rend, codigo: cod, data: new Date() });
     alert("Cadastrado!");
 };
+window.exportarProdutos = async () => {
+    const q = query(collection(db, "estoque"));
+    const snap = await getDocs(q);
+    const produtos = [];
+    snap.forEach(doc => produtos.push(doc.data()));
+    
+    const blob = new Blob([JSON.stringify(produtos, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'estoque_boteco934.json';
+    a.click();
+};
