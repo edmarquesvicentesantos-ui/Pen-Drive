@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boteco 934 | PDV Pro 2026</title>
+    <title>Boteco 934 | PDV Premium 2026</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
@@ -17,7 +17,7 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>DESCRIÇÃO DO ITEM</th>
+                            <th>DESCRIÇÃO</th>
                             <th>QTD</th>
                             <th style="text-align:right">TOTAL</th>
                         </tr>
@@ -52,7 +52,7 @@
             </div>
 
             <div class="secao">
-                <p class="titulo-secao">FORMA DE PAGAMENTO</p>
+                <p class="titulo-secao">PAGAMENTO</p>
                 <div class="grade-pagamento">
                     <button class="btn-pg ativo" onclick="escolherPag('Pix', this)">PIX</button>
                     <button class="btn-pg" onclick="escolherPag('Dinheiro', this)">DINHEIRO</button>
@@ -64,8 +64,16 @@
 
             <button class="btn-finalizar" onclick="finalizarVenda()">CONCLUIR VENDA 🍻</button>
 
+            <div class="grade-dados">
+                <button class="btn-dados exportar" onclick="exportarEstoque()">📤 BACKUP</button>
+                <label class="btn-dados importar">
+                    📥 IMPORTAR
+                    <input type="file" id="arquivoImportar" style="display:none" onchange="importarEstoque(event)">
+                </label>
+            </div>
+
             <div class="secao card-reposicao">
-                <p class="titulo-secao">REPOSIÇÃO (ESTOQUE BAIXO) 🛒</p>
+                <p class="titulo-secao">ESTOQUE BAIXO 🛒</p>
                 <div id="lista-reposicao" class="scroll-especial"></div>
             </div>
 
@@ -80,9 +88,27 @@
         <div class="modal-card">
             <h2>CADASTRAR PRODUTO</h2>
             <div class="grade-form">
-                <input type="text" id="cadCodigo" placeholder="Bipe o código de barras">
-                <input type="text" id="cadNome" placeholder="Nome (Ex: HEINEKEN)">
-                <input type="number" step="0.01" id="cadPreco" placeholder="Preço de Venda">
-                <input type="number" id="cadEstoque" placeholder="Estoque Atual">
+                <input type="text" id="cadCodigo" placeholder="Código de Barras">
+                <input type="text" id="cadNome" placeholder="Nome do Produto">
+                <input type="number" step="0.01" id="cadPreco" placeholder="Preço">
+                <input type="number" id="cadEstoque" placeholder="Estoque">
             </div>
             <div class="botoes-modal">
+                <button class="btn-salvar-prod" onclick="salvarNovoProduto()">SALVAR ✅</button>
+                <button class="btn-cancelar-prod" onclick="fecharModal()">FECHAR</button>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn-config-flutuante" onclick="abrirModal()">⚙️ GESTÃO</button>
+
+    <script type="module" src="app.js"></script>
+    <script>
+        window.escolherPag = (metodo, btn) => {
+            document.getElementById('metodoPagamento').value = metodo;
+            document.querySelectorAll('.btn-pg').forEach(b => b.classList.remove('ativo'));
+            btn.classList.add('ativo');
+        };
+    </script>
+</body>
+</html>
