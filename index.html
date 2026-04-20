@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boteco 934 | PDV Premium</title>
+    <title>Boteco 934 | PDV Pro 2026</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
         <main class="area-cupom">
             <div class="cabecalho-loja">
                 <h1>BOTECO 934</h1>
-                <p>O MELHOR DA REGIÃO - PETROLINA</p>
+                <p>PETROLINA - PERNAMBUCO</p>
             </div>
             <div class="tabela-venda">
                 <table>
@@ -52,7 +52,7 @@
             </div>
 
             <div class="secao">
-                <p class="titulo-secao">PAGAMENTO</p>
+                <p class="titulo-secao">FORMA DE PAGAMENTO</p>
                 <div class="grade-pagamento">
                     <button class="btn-pg ativo" onclick="escolherPag('Pix', this)">PIX</button>
                     <button class="btn-pg" onclick="escolherPag('Dinheiro', this)">DINHEIRO</button>
@@ -64,50 +64,25 @@
 
             <button class="btn-finalizar" onclick="finalizarVenda()">CONCLUIR VENDA 🍻</button>
 
+            <div class="secao card-reposicao">
+                <p class="titulo-secao">REPOSIÇÃO (ESTOQUE BAIXO) 🛒</p>
+                <div id="lista-reposicao" class="scroll-especial"></div>
+            </div>
+
             <div class="secao card-penduras">
                 <p class="titulo-secao">PENDURAS ATIVAS ⚠️</p>
-                <div id="lista-penduras" class="scroll-penduras"></div>
+                <div id="lista-penduras" class="scroll-especial"></div>
             </div>
         </aside>
     </div>
 
     <div id="modalCadastro" class="modal-overlay">
         <div class="modal-card">
-            <h2>NOVO PRODUTO</h2>
+            <h2>CADASTRAR PRODUTO</h2>
             <div class="grade-form">
-                <div class="campo">
-                    <label>CÓDIGO DE BARRAS</label>
-                    <input type="text" id="cadCodigo" placeholder="Bipe agora...">
-                </div>
-                <div class="campo">
-                    <label>NOME</label>
-                    <input type="text" id="cadNome" placeholder="Ex: Heineken 350ml">
-                </div>
-                <div class="campo">
-                    <label>PREÇO</label>
-                    <input type="number" step="0.01" id="cadPreco" placeholder="0.00">
-                </div>
-                <div class="campo">
-                    <label>ESTOQUE</label>
-                    <input type="number" id="cadEstoque" placeholder="Qtd">
-                </div>
+                <input type="text" id="cadCodigo" placeholder="Bipe o código de barras">
+                <input type="text" id="cadNome" placeholder="Nome (Ex: HEINEKEN)">
+                <input type="number" step="0.01" id="cadPreco" placeholder="Preço de Venda">
+                <input type="number" id="cadEstoque" placeholder="Estoque Atual">
             </div>
             <div class="botoes-modal">
-                <button class="btn-salvar-prod" onclick="salvarNovoProduto()">SALVAR ✅</button>
-                <button class="btn-cancelar-prod" onclick="fecharModal()">FECHAR</button>
-            </div>
-        </div>
-    </div>
-
-    <button class="btn-config-flutuante" onclick="abrirModal()">⚙️ CADASTRAR</button>
-
-    <script type="module" src="app.js"></script>
-    <script>
-        window.escolherPag = (metodo, btn) => {
-            document.getElementById('metodoPagamento').value = metodo;
-            document.querySelectorAll('.btn-pg').forEach(b => b.classList.remove('ativo'));
-            btn.classList.add('ativo');
-        };
-    </script>
-</body>
-</html>
