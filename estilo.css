@@ -1,30 +1,32 @@
-body { background: #0d0d0d; color: #f2f2f2; font-family: sans-serif; padding: 15px; margin: 0; }
-.container { max-width: 480px; margin: auto; }
-header { display: flex; justify-content: space-between; border-bottom: 2px solid #1fcc7d; padding: 10px 0; margin-bottom: 15px; }
-h1 { font-size: 18px; color: #1fcc7d; margin: 0; }
-.total-topo { font-size: 18px; color: #1fcc7d; font-weight: bold; }
+body { background: #0a0a0a; color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; }
+.container-geral { display: grid; grid-template-columns: 1fr 350px; height: 100vh; gap: 10px; padding: 10px; box-sizing: border-box; }
 
-input, select, button { 
-    width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #333; 
-    background: #1a1a1a; color: #fff; font-size: 15px; box-sizing: border-box;
-}
-#biparVenda { border: 2px solid #1fcc7d; }
-button { background: #1fcc7d; color: #000; font-weight: bold; cursor: pointer; border: none; }
+/* LADO ESQUERDO */
+.caixa-principal { background: #141414; border-radius: 12px; display: flex; flex-direction: column; padding: 20px; }
+.topo-pdv { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #1fcc7d; margin-bottom: 20px; }
+.display-total { font-size: 48px; font-weight: bold; color: #1fcc7d; }
 
-.item-carrinho { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #222; font-size: 14px; }
+#biparVenda { width: 100%; padding: 20px; font-size: 24px; background: #000; border: 2px solid #333; color: #1fcc7d; border-radius: 8px; margin-bottom: 20px; }
 
-.caixa-relatorio { background: #141414; padding: 15px; border-radius: 12px; margin-top: 20px; }
-h3 { font-size: 15px; color: #1fcc7d; margin: 15px 0 10px 0; border-left: 3px solid #1fcc7d; padding-left: 8px; }
+.lista-itens-pdv { flex-grow: 1; overflow-y: auto; background: #0a0a0a; border-radius: 8px; padding: 10px; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; color: #666; padding: 10px; border-bottom: 1px solid #222; }
+td { padding: 15px 10px; border-bottom: 1px solid #1a1a1a; font-size: 18px; }
 
-.cards-financeiro { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.mini-card { background: #1e1e1e; padding: 10px; border-radius: 8px; font-size: 13px; color: #aaa; border: 1px solid #222; }
-.mini-card span { display: block; font-size: 15px; color: #fff; font-weight: bold; margin-top: 4px; }
-.card-pix { border-left: 4px solid #3498db; }
-.card-dinheiro { border-left: 4px solid #1fcc7d; }
-.card-cartao { border-left: 4px solid #f1c40f; }
-.card-pendura span { color: #ff5e5e; }
+.rodape-venda { display: grid; grid-template-columns: 1fr 150px 200px; gap: 10px; margin-top: 20px; }
+.btn-finalizar { background: #1fcc7d; color: #000; font-size: 18px; font-weight: bold; cursor: pointer; border: none; border-radius: 8px; }
 
-.grid-estoque { display: grid; gap: 10px; }
-.card-estoque { background: #1a1a1a; padding: 10px; border-radius: 8px; border: 1px solid #333; }
-.barra-fora { width: 100%; height: 6px; background: #333; border-radius: 5px; margin-top: 5px; overflow: hidden; }
-.barra-dentro { height: 100%; transition: 0.6s; }
+/* LADO DIREITO */
+.painel-lateral { display: flex; flex-direction: column; gap: 10px; }
+.card-faturamento, .card-estoque-lista { background: #141414; padding: 15px; border-radius: 12px; }
+.grid-caixa { display: grid; gap: 10px; margin-top: 10px; }
+.item-caixa { background: #1a1a1a; padding: 10px; border-radius: 8px; border-left: 4px solid #1fcc7d; }
+
+.card-estoque-lista { flex-grow: 1; overflow-y: auto; }
+.barra-fora { width: 100%; height: 8px; background: #333; border-radius: 4px; margin-top: 5px; }
+.barra-dentro { height: 100%; border-radius: 4px; transition: 0.5s; }
+
+.modal-conferencia { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); display:none; justify-content:center; align-items:center; }
+.modal-conteudo { background: #141414; padding: 30px; border-radius: 15px; width: 80%; max-width: 600px; }
+
+@media (max-width: 800px) { .container-geral { grid-template-columns: 1fr; } }
