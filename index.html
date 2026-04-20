@@ -3,87 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boteco 934 | PDV Pro</title>
+    <title>Boteco 934 | PDV Aberto</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Boteco 934</h1>
-            <div class="total-topo">Total: <span id="total-venda-valor">R$ 0,00</span></div>
-        </header>
+    <div class="container-geral">
+        <main class="caixa-principal">
+            <header class="topo-pdv">
+                <h1>BOTECO 934</h1>
+                <div class="display-total">R$ <span id="total-venda-valor">0,00</span></div>
+            </header>
 
-        <section class="caixa-venda">
-            <input type="text" id="biparVenda" placeholder="BIPAR PRODUTO OU DOSE" autofocus>
-            <div id="lista-carrinho"></div>
-            
-            <div class="controles-venda">
-                <input type="text" id="identificacaoCliente" placeholder="Mesa ou Nome do Cliente">
+            <div class="entrada-bip">
+                <input type="text" id="biparVenda" placeholder="PASSE O PRODUTO AQUI..." autofocus>
+            </div>
+
+            <div class="lista-itens-pdv">
+                <table id="tabela-carrinho">
+                    <thead>
+                        <tr>
+                            <th>QTD</th>
+                            <th>PRODUTO</th>
+                            <th>UNIT.</th>
+                            <th>TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpo-carrinho">
+                        </tbody>
+                </table>
+            </div>
+
+            <div class="rodape-venda">
+                <input type="text" id="identificacaoCliente" placeholder="NOME DO CLIENTE OU MESA">
                 <select id="metodoPagamento">
                     <option value="Pix">Pix</option>
                     <option value="Dinheiro">Dinheiro</option>
                     <option value="Cartão">Cartão</option>
                     <option value="Pendura">Pendura</option>
                 </select>
-                <button onclick="finalizarVenda()">FINALIZAR VENDA 🍻</button>
+                <button class="btn-finalizar" onclick="finalizarVenda()">CONCLUIR VENDA (F10) 🍻</button>
             </div>
-        </section>
+        </main>
 
-        <div id="areaConferencia" style="display:none; background: #1e1e1e; padding: 15px; border-radius: 10px; border: 1px solid #f1c40f; margin-bottom: 20px;">
-            <h3 style="color: #f1c40f; margin-top: 0;">🔍 Conferir Importação</h3>
-            <div style="overflow-x: auto;">
-                <table style="width: 100%; font-size: 13px; text-align: left; border-collapse: collapse;">
-                    <thead>
-                        <tr style="border-bottom: 1px solid #444; color: #aaa;">
-                            <th>Produto</th>
-                            <th>Custo</th>
-                            <th>Venda</th>
-                            <th>Cód.</th>
-                        </tr>
-                    </thead>
-                    <tbody id="corpoConferencia"></tbody>
-                </table>
+        <aside class="painel-lateral">
+            <div class="card-faturamento">
+                <h3>💰 CAIXA DO DIA</h3>
+                <div class="grid-caixa">
+                    <div class="item-caixa">Pix: <span id="faturamento-pix">0,00</span></div>
+                    <div class="item-caixa">Dinheiro: <span id="faturamento-dinheiro">0,00</span></div>
+                    <div class="item-caixa">Pendura: <span id="faturamento-pendura">0,00</span></div>
+                </div>
             </div>
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button onclick="confirmarImportacao()" style="background: #1fcc7d; color: #000; font-size: 12px;">CONFIRMAR E SALVAR ✅</button>
-                <button onclick="cancelarImportacao()" style="background: #ff5e5e; color: #fff; font-size: 12px;">CANCELAR ❌</button>
-            </div>
-        </div>
 
-        <section class="caixa-relatorio">
-            <h3>📥 Gestão de Arquivos (XML/Backup)</h3>
-            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                <button onclick="exportarEstoque()" style="background: #3498db; font-size: 13px;">SALVAR BACKUP</button>
-                <label style="background: #8e44ad; color: white; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: bold; flex: 1; text-align: center;">
-                    IMPORTAR LISTA/XML
-                    <input type="file" id="arquivoImportar" style="display:none" accept=".json,.xml">
+            <div class="card-estoque-lista">
+                <h3>🥃 ESTOQUE DE DOSES</h3>
+                <div id="grid-estoque"></div>
+            </div>
+
+            <div class="acoes-sistema">
+                <button onclick="exportarEstoque()">BACKUP</button>
+                <label class="btn-import">
+                    IMPORTAR XML
+                    <input type="file" id="arquivoImportar" style="display:none">
                 </label>
             </div>
-
-            <h3>📊 Resumo de Hoje</h3>
-            <div class="cards-financeiro">
-                <div class="mini-card card-pix">Pix: <span id="faturamento-pix">R$ 0,00</span></div>
-                <div class="mini-card card-dinheiro">Dinheiro: <span id="faturamento-dinheiro">R$ 0,00</span></div>
-                <div class="mini-card card-cartao">Cartão: <span id="faturamento-cartao">R$ 0,00</span></div>
-                <div class="mini-card card-pendura">Penduras: <span id="faturamento-pendura">R$ 0,00</span></div>
-            </div>
-
-            <h3>🥃 Inventário de Doses e Estoque</h3>
-            <div id="grid-estoque" class="grid-estoque"></div>
-        </section>
-
-        <details>
-            <summary>📦 Cadastro Manual</summary>
-            <div class="caixa-cadastro">
-                <input type="text" id="codigoBarra" placeholder="Código de Barras">
-                <input type="text" id="nomeProduto" placeholder="Nome do Produto">
-                <input type="number" id="custoProduto" placeholder="Custo da Garrafa">
-                <input type="number" id="precoProduto" placeholder="Preço da Dose/Unidade">
-                <input type="number" id="qtdDoses" placeholder="Rendimento (Ex: 15 doses)">
-                <button onclick="salvarProduto()">SALVAR NO ESTOQUE</button>
-            </div>
-        </details>
+        </aside>
     </div>
+
+    <div id="areaConferencia" class="modal-conferencia">
+        <div class="modal-conteudo">
+            <h2>VERIFICAR PRODUTOS</h2>
+            <div id="corpoConferencia"></div>
+            <button onclick="confirmarImportacao()" style="background:#1fcc7d">SALVAR TUDO</button>
+            <button onclick="cancelarImportacao()" style="background:#ff5e5e">CANCELAR</button>
+        </div>
+    </div>
+
     <script type="module" src="app.js"></script>
 </body>
 </html>
