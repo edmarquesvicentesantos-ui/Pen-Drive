@@ -3,27 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boteco 934 | PDV Aberto</title>
+    <title>Boteco 934 | PDV Balcão</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
-    <div class="container-geral">
-        <main class="caixa-principal">
-            <header class="topo-pdv">
-                <h1>BOTECO 934</h1>
-                <div class="display-total">R$ <span id="total-venda-valor">0,00</span></div>
-            </header>
-
-            <div class="entrada-bip">
-                <input type="text" id="biparVenda" placeholder="PASSE O PRODUTO AQUI..." autofocus>
+    <div class="tela-pdv">
+        <section class="area-cliente">
+            <div class="cabecalho-cliente">
+                <span class="nome-loja">BOTECO 934</span>
+                <div class="total-grande">R$ <span id="total-venda-valor">0,00</span></div>
             </div>
 
-            <div class="lista-itens-pdv">
-                <table id="tabela-carrinho">
+            <div class="lista-produtos">
+                <table id="tabela-venda">
                     <thead>
                         <tr>
                             <th>QTD</th>
-                            <th>PRODUTO</th>
+                            <th>ITEM</th>
                             <th>UNIT.</th>
                             <th>TOTAL</th>
                         </tr>
@@ -33,49 +29,47 @@
                 </table>
             </div>
 
-            <div class="rodape-venda">
-                <input type="text" id="identificacaoCliente" placeholder="NOME DO CLIENTE OU MESA">
+            <div class="barra-bip">
+                <input type="text" id="biparVenda" placeholder="PASSE O CÓDIGO DE BARRAS..." autofocus>
+            </div>
+        </section>
+
+        <aside class="area-controle">
+            <div class="card-controle">
+                <h3>FECHAMENTO</h3>
+                <input type="text" id="identificacaoCliente" placeholder="CLIENTE / MESA">
                 <select id="metodoPagamento">
-                    <option value="Pix">Pix</option>
-                    <option value="Dinheiro">Dinheiro</option>
-                    <option value="Cartão">Cartão</option>
-                    <option value="Pendura">Pendura</option>
+                    <option value="Pix">PIX</option>
+                    <option value="Dinheiro">DINHEIRO</option>
+                    <option value="Cartão">CARTÃO</option>
+                    <option value="Pendura">PENDURA</option>
                 </select>
-                <button class="btn-finalizar" onclick="finalizarVenda()">CONCLUIR VENDA (F10) 🍻</button>
-            </div>
-        </main>
-
-        <aside class="painel-lateral">
-            <div class="card-faturamento">
-                <h3>💰 CAIXA DO DIA</h3>
-                <div class="grid-caixa">
-                    <div class="item-caixa">Pix: <span id="faturamento-pix">0,00</span></div>
-                    <div class="item-caixa">Dinheiro: <span id="faturamento-dinheiro">0,00</span></div>
-                    <div class="item-caixa">Pendura: <span id="faturamento-pendura">0,00</span></div>
-                </div>
+                <button class="btn-finalizar" onclick="finalizarVenda()">FINALIZAR 🍻</button>
             </div>
 
-            <div class="card-estoque-lista">
-                <h3>🥃 ESTOQUE DE DOSES</h3>
-                <div id="grid-estoque"></div>
+            <div class="card-resumo">
+                <h3>CAIXA HOJE</h3>
+                <div class="resumo-linha">Pix: <span id="faturamento-pix">0,00</span></div>
+                <div class="resumo-linha">Dinheiro: <span id="faturamento-dinheiro">0,00</span></div>
+                <div class="resumo-linha">Pendura: <span id="faturamento-pendura" style="color: #ff5e5e;">0,00</span></div>
             </div>
 
-            <div class="acoes-sistema">
+            <div class="acoes-extras">
                 <button onclick="exportarEstoque()">BACKUP</button>
                 <label class="btn-import">
-                    IMPORTAR XML
+                    XML
                     <input type="file" id="arquivoImportar" style="display:none">
                 </label>
             </div>
         </aside>
     </div>
 
-    <div id="areaConferencia" class="modal-conferencia">
-        <div class="modal-conteudo">
-            <h2>VERIFICAR PRODUTOS</h2>
-            <div id="corpoConferencia"></div>
-            <button onclick="confirmarImportacao()" style="background:#1fcc7d">SALVAR TUDO</button>
-            <button onclick="cancelarImportacao()" style="background:#ff5e5e">CANCELAR</button>
+    <div id="areaConferencia" class="modal">
+        <div class="modal-content">
+            <h2>REVISAR IMPORTAÇÃO</h2>
+            <div id="corpoConferencia" class="scroll-conferencia"></div>
+            <button onclick="confirmarImportacao()" class="btn-confirmar">SALVAR TUDO ✅</button>
+            <button onclick="cancelarImportacao()" class="btn-cancelar">DESCARTAR ❌</button>
         </div>
     </div>
 
