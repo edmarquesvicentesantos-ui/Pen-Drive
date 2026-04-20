@@ -3,63 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boteco 934 | PDV e Relatórios</title>
+    <title>Boteco 934 | PDV Premium</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Boteco 934</h1>
-            <div class="total-topo"><span id="total-venda-valor">R$ 0,00</span></div>
+            <div class="total-topo">Total: <span id="total-venda-valor">R$ 0,00</span></div>
         </header>
 
         <section class="caixa-venda">
-            <input type="text" id="biparVenda" placeholder="BIPAR PRODUTO" autofocus>
+            <input type="text" id="biparVenda" placeholder="BIPAR PRODUTO OU DOSE" autofocus>
             <div id="lista-carrinho"></div>
+            
             <div class="controles-venda">
-                <input type="text" id="identificacaoCliente" placeholder="Mesa ou Nome">
+                <input type="text" id="identificacaoCliente" placeholder="Mesa ou Nome do Cliente">
                 <select id="metodoPagamento">
                     <option value="Pix">Pix</option>
                     <option value="Dinheiro">Dinheiro</option>
                     <option value="Cartão">Cartão</option>
                     <option value="Pendura">Pendura</option>
                 </select>
-                <button onclick="finalizarVenda()">FINALIZAR VENDA</button>
+                <button onclick="finalizarVenda()">FINALIZAR VENDA 🍻</button>
             </div>
         </section>
-<details>
-    <summary>📦 Cadastrar Novo Produto / Destilado</summary>
-    <div class="caixa-cadastro">
-        <input type="text" id="codigoBarra" placeholder="Cód. Barra">
-        <input type="text" id="nomeProduto" placeholder="Nome (Ex: Pitu Garrafa)">
-        <input type="number" id="custoProduto" placeholder="Custo da Garrafa">
-        <input type="number" id="precoProduto" placeholder="Preço de Venda">
-        <input type="number" id="qtdDoses" placeholder="Rende quantas doses? (Ex: 15)">
-        <button onclick="salvarProduto()">OK</button>
-    </div>
-</details>
+
         <section class="caixa-relatorio">
-            <h3>📊 Resumo de Hoje</h3>
+            <h3>📊 Resumo Financeiro Hoje</h3>
             <div class="cards-financeiro">
                 <div class="mini-card">Pix: <span id="faturamento-pix">R$ 0,00</span></div>
                 <div class="mini-card">Dinheiro: <span id="faturamento-dinheiro">R$ 0,00</span></div>
                 <div class="mini-card">Cartão: <span id="faturamento-cartao">R$ 0,00</span></div>
-                <div class="mini-card pendura">Total Pendura: <span id="faturamento-pendura">R$ 0,00</span></div>
+                <div class="mini-card pendura">Penduras: <span id="faturamento-pendura">R$ 0,00</span></div>
             </div>
-            
-            <h3>📝 Lista de Penduras (A cobrar)</h3>
-            <ul id="lista-penduras" class="penduras-scroll">
-                </ul>
+
+            <h3>📝 Penduras Ativas</h3>
+            <ul id="lista-penduras"></ul>
+
+            <h3>🥃 Inventário de Doses e Estoque</h3>
+            <div id="grid-estoque" class="grid-estoque"></div>
         </section>
 
         <details>
-            <summary>📦 Cadastrar no Estoque</summary>
+            <summary>📦 Cadastrar Novo (Garrafa ou Unidade)</summary>
             <div class="caixa-cadastro">
-                <input type="text" id="codigoBarra" placeholder="Cód. Barra">
-                <input type="text" id="nomeProduto" placeholder="Nome">
-                <input type="number" id="custoProduto" placeholder="Custo">
-                <input type="number" id="precoProduto" placeholder="Venda">
-                <button onclick="salvarProduto()">OK</button>
+                <input type="text" id="codigoBarra" placeholder="Código de Barras">
+                <input type="text" id="nomeProduto" placeholder="Nome (Ex: Pitu 1L)">
+                <input type="number" id="custoProduto" placeholder="Custo da Garrafa">
+                <input type="number" id="precoProduto" placeholder="Preço da Dose/Unidade">
+                <input type="number" id="qtdDoses" placeholder="Rendimento (Ex: 15 doses)">
+                <button onclick="salvarProduto()">SALVAR NO ESTOQUE</button>
             </div>
         </details>
     </div>
