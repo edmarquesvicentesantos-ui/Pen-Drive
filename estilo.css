@@ -1,14 +1,12 @@
-body { background: #000 !important; color: #fff; font-family: sans-serif; padding: 20px; margin: 0; }
-.container { max-width: 500px; margin: auto; }
-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #2ecc71; padding-bottom: 10px; }
-h1 { color: #2ecc71; margin: 0; font-size: 24px; }
-.caixa-cadastro { background: #1a1a1a; padding: 20px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-.linha { display: flex; gap: 10px; margin-bottom: 10px; }
-input { background: #333; border: 1px solid #444; color: #fff; padding: 12px; border-radius: 8px; width: 100%; outline: none; }
-input:focus { border-color: #2ecc71; }
-button { background: #2ecc71; color: #fff; border: none; padding: 10px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 22px; }
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-.card { background: #1a1a1a; padding: 15px; border-radius: 12px; border-bottom: 4px solid #2ecc71; text-align: center; }
-.card h4 { margin: 0; font-size: 14px; color: #aaa; text-transform: uppercase; }
-.card .preco { display: block; font-size: 20px; font-weight: bold; color: #2ecc71; margin-top: 5px; }
-.card .barcode { font-size: 10px; color: #555; display: block; margin-bottom: 5px; }
+body { background: #000; color: #fff; font-family: sans-serif; padding: 15px; }
+.container { max-width: 600px; margin: auto; }
+.caixa-cadastro { background: #1a1a1a; padding: 15px; border-radius: 12px; margin-bottom: 20px; }
+.linha { display: flex; gap: 8px; margin-bottom: 8px; }
+input, select { background: #333; border: 1px solid #444; color: #fff; padding: 10px; border-radius: 6px; width: 100%; }
+button { background: #2ecc71; border: none; color: #fff; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.card { background: #1a1a1a; padding: 10px; border-radius: 10px; border-bottom: 4px solid #2ecc71; position: relative; }
+.categoria-tag { background: #3498db; font-size: 10px; padding: 2px 6px; border-radius: 4px; position: absolute; top: 15px; left: 15px; }
+h4 { margin: 10px 0 5px 0; font-size: 13px; height: 32px; overflow: hidden; }
+.preco { color: #2ecc71; font-weight: bold; font-size: 18px; }
+.lucro-info { margin-top: 8px; border-top: 1px solid #333; padding-top: 5px; display: flex; flex-direction: column; font-size: 11px; }
