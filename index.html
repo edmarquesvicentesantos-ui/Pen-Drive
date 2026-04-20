@@ -1,14 +1,68 @@
-window.finalizarVenda = async () => {
-    // ... (mantenha a lógica de baixar estoque que já temos) ...
-    
-    const acao = prompt("Deseja: \n1 - Imprimir Recibo\n2 - Enviar WhatsApp\n3 - Ambos\n4 - Só Salvar");
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boteco 934 | PDV Pro</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Boteco 934</h1>
+            <div class="total-topo">Total: <span id="total-venda-valor">R$ 0,00</span></div>
+        </header>
 
-    if (acao == "1" || acao == "3") {
-        imprimirReciboTermico(cliente, carrinho, total, pag);
-    }
-    if (acao == "2" || acao == "3") {
-        enviarRecibo(cliente, carrinho, total, pag);
-    }
-    
-    // ... (limpa o carrinho e reseta o formulário) ...
-};
+        <section class="caixa-venda">
+            <input type="text" id="biparVenda" placeholder="BIPAR PRODUTO OU DOSE" autofocus>
+            <div id="lista-carrinho"></div>
+            
+            <div class="controles-venda">
+                <input type="text" id="identificacaoCliente" placeholder="Mesa ou Nome do Cliente">
+                <select id="metodoPagamento">
+                    <option value="Pix">Pix</option>
+                    <option value="Dinheiro">Dinheiro</option>
+                    <option value="Cartão">Cartão</option>
+                    <option value="Pendura">Pendura</option>
+                </select>
+                <button onclick="finalizarVenda()">FINALIZAR VENDA 🍻</button>
+            </div>
+        </section>
+
+        <section class="caixa-relatorio">
+            <h3>📥 Gestão de Arquivos (XML/Backup)</h3>
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button onclick="exportarEstoque()" style="background: #3498db; font-size: 13px;">SALVAR BACKUP</button>
+                <label class="btn-importar" style="background: #8e44ad; color: white; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: bold; flex: 1; text-align: center;">
+                    IMPORTAR XML / LISTA
+                    <input type="file" id="arquivoImportar" style="display:none" accept=".json,.xml">
+                </label>
+            </div>
+
+            <h3>📊 Resumo Financeiro Hoje</h3>
+            <div class="cards-financeiro">
+                <div class="mini-card card-pix">Pix: <span id="faturamento-pix">R$ 0,00</span></div>
+                <div class="mini-card card-dinheiro">Dinheiro: <span id="faturamento-dinheiro">R$ 0,00</span></div>
+                <div class="mini-card card-cartao">Cartão: <span id="faturamento-cartao">R$ 0,00</span></div>
+                <div class="mini-card card-pendura">Penduras: <span id="faturamento-pendura">R$ 0,00</span></div>
+            </div>
+
+            <h3>🥃 Inventário de Doses e Estoque</h3>
+            <div id="grid-estoque" class="grid-estoque"></div>
+        </section>
+
+        <details>
+            <summary>📦 Cadastrar Novo Produto</summary>
+            <div class="caixa-cadastro">
+                <input type="text" id="codigoBarra" placeholder="Código de Barras">
+                <input type="text" id="nomeProduto" placeholder="Nome do Produto">
+                <input type="number" id="custoProduto" placeholder="Custo da Garrafa">
+                <input type="number" id="precoProduto" placeholder="Preço da Dose/Unidade">
+                <input type="number" id="qtdDoses" placeholder="Rendimento (Ex: 15 doses)">
+                <button onclick="salvarProduto()">SALVAR NO ESTOQUE</button>
+            </div>
+        </details>
+    </div>
+    <script type="module" src="app.js"></script>
+</body>
+</html>
