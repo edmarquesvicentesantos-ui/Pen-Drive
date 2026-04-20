@@ -6,3 +6,9 @@
 .mini-card span { display: block; font-weight: bold; font-size: 16px; color: #fff; }
 .penduras-scroll { list-style: none; padding: 0; max-height: 150px; overflow-y: auto; background: #000; border-radius: 5px; }
 .penduras-scroll li { padding: 8px; border-bottom: 1px solid #222; font-size: 14px; color: #e74c3c; }
+
+.penduras-scroll button { 
+    margin-left: 10px; 
+    border-radius: 4px; 
+    cursor: pointer; 
+}
