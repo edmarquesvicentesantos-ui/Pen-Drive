@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, where, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAZf_RpFnTCS3DxqKIxpK7CEh5aTrLMEs4",
@@ -14,7 +14,23 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 let carrinho = [];
 
-// BIPAR E VENDER
+// --- FUNÇÃO PARA RECEBER PENDURA ---
+window.receberPagamento = async (vendaId, nomeCliente) => {
+    const novoMetodo = prompt(`Como o(a) ${nomeCliente} pagou? (Pix, Dinheiro ou Cartão)` );
+    if (!novoMetodo || !["Pix", "Dinheiro", "Cartão"].includes(novoMetodo)) {
+        return alert("Pagamento cancelado ou método inválido!");
+    }
+
+    try {
+        const vendaRef = doc(db, "vendas", vendaId);
+        await updateDoc(vendaRef, { pagamento: novoMetodo });
+        alert(`Pagamento de ${nomeCliente} recebido via ${novoMetodo}! ✅`);
+    } catch (e) {
+        alert("Erro ao processar: " + e.message);
+    }
+};
+
+// --- MANTENDO O PDV E CADASTRO ---
 document.getElementById('biparVenda').addEventListener('change', async (e) => {
     const code = e.target.value.trim();
     if (!code) return;
@@ -30,48 +46,41 @@ document.getElementById('biparVenda').addEventListener('change', async (e) => {
             carrinho.push({ nome: p.nome, preco: p.preco, codigo: code, qtd: 1, subtotal: p.preco });
         }
         renderizarCarrinho();
-    } else { alert("Produto não cadastrado!"); }
+    }
     e.target.value = ""; e.target.focus();
 });
 
 function renderizarCarrinho() {
     const lista = document.getElementById('lista-carrinho');
     const totalElt = document.getElementById('total-venda-valor');
-    lista.innerHTML = "";
-    let totalGeral = 0;
-    carrinho.forEach((item) => {
-        totalGeral += item.subtotal;
-        lista.innerHTML += `<div class="item-carrinho"><span>${item.qtd}x ${item.nome}</span> <span>R$ ${item.subtotal.toFixed(2)}</span></div>`;
-    });
-    totalElt.innerText = `R$ ${totalGeral.toFixed(2)}`;
+    lista.innerHTML = carrinho.map(item => `<div class="item-carrinho"><span>${item.qtd}x ${item.nome}</span> <span>R$ ${item.subtotal.toFixed(2)}</span></div>`).join('');
+    totalElt.innerText = `R$ ${carrinho.reduce((acc, i) => acc + i.subtotal, 0).toFixed(2)}`;
 }
 
 window.finalizarVenda = async () => {
     const cliente = document.getElementById('identificacaoCliente').value;
     const pagamento = document.getElementById('metodoPagamento').value;
     const total = carrinho.reduce((acc, i) => acc + i.subtotal, 0);
-    if (!cliente || total === 0) return alert("Falta o Cliente ou Itens!");
-    try {
-        await addDoc(collection(db, "vendas"), {
-            cliente: cliente.toUpperCase(), pagamento, total, itens: carrinho, data: new Date()
-        });
-        alert("Venda Registrada! 🍻");
-        carrinho = []; renderizarCarrinho();
-        document.getElementById('identificacaoCliente').value = "";
-    } catch (e) { alert("Erro ao fechar venda: " + e.message); }
+    if (!cliente || total === 0) return alert("Falta Cliente/Itens!");
+    await addDoc(collection(db, "vendas"), { cliente: cliente.toUpperCase(), pagamento, total, data: new Date() });
+    carrinho = []; renderizarCarrinho(); document.getElementById('identificacaoCliente').value = "";
 };
 
-// RELATÓRIO DO DIA EM TEMPO REAL
+// --- ATUALIZAÇÃO DO RELATÓRIO E LISTA COM BOTÃO RECEBER ---
 onSnapshot(collection(db, "vendas"), (snap) => {
     let totais = { Pix: 0, Dinheiro: 0, Cartão: 0, Pendura: 0 };
     const listaPenduras = document.getElementById('lista-penduras');
     listaPenduras.innerHTML = "";
 
-    snap.forEach(doc => {
-        const v = doc.data();
+    snap.forEach(vDoc => {
+        const v = vDoc.data();
         if (totais[v.pagamento] !== undefined) totais[v.pagamento] += v.total;
         if (v.pagamento === "Pendura") {
-            listaPenduras.innerHTML += `<li><strong>${v.cliente}</strong> deve R$ ${v.total.toFixed(2)}</li>`;
+            listaPenduras.innerHTML += `
+                <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                    <span>${v.cliente}: R$ ${v.total.toFixed(2)}</span>
+                    <button onclick="receberPagamento('${vDoc.id}', '${v.cliente}')" style="background:#3498db; padding:4px 8px; font-size:12px;">RECEBER</button>
+                </li>`;
         }
     });
 
@@ -84,8 +93,7 @@ onSnapshot(collection(db, "vendas"), (snap) => {
 window.salvarProduto = async () => {
     const nome = document.getElementById('nomeProduto').value;
     const preco = document.getElementById('precoProduto').value;
-    const custo = document.getElementById('custoProduto').value;
     const codigo = document.getElementById('codigoBarra').value.trim();
-    await addDoc(collection(db, "estoque"), { nome: nome.toUpperCase(), preco: parseFloat(preco), custo: parseFloat(custo), codigo, data: new Date() });
-    alert("Produto Salvo!");
+    await addDoc(collection(db, "estoque"), { nome: nome.toUpperCase(), preco: parseFloat(preco), codigo, data: new Date() });
+    alert("Salvo!");
 };
