@@ -29,17 +29,38 @@
             </div>
         </section>
 
+        <div id="areaConferencia" style="display:none; background: #1e1e1e; padding: 15px; border-radius: 10px; border: 1px solid #f1c40f; margin-bottom: 20px;">
+            <h3 style="color: #f1c40f; margin-top: 0;">🔍 Conferir Importação</h3>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; font-size: 13px; text-align: left; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid #444; color: #aaa;">
+                            <th>Produto</th>
+                            <th>Custo</th>
+                            <th>Venda</th>
+                            <th>Cód.</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpoConferencia"></tbody>
+                </table>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button onclick="confirmarImportacao()" style="background: #1fcc7d; color: #000; font-size: 12px;">CONFIRMAR E SALVAR ✅</button>
+                <button onclick="cancelarImportacao()" style="background: #ff5e5e; color: #fff; font-size: 12px;">CANCELAR ❌</button>
+            </div>
+        </div>
+
         <section class="caixa-relatorio">
             <h3>📥 Gestão de Arquivos (XML/Backup)</h3>
             <div style="display: flex; gap: 10px; margin-bottom: 20px;">
                 <button onclick="exportarEstoque()" style="background: #3498db; font-size: 13px;">SALVAR BACKUP</button>
-                <label class="btn-importar" style="background: #8e44ad; color: white; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: bold; flex: 1; text-align: center;">
-                    IMPORTAR XML / LISTA
+                <label style="background: #8e44ad; color: white; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: bold; flex: 1; text-align: center;">
+                    IMPORTAR LISTA/XML
                     <input type="file" id="arquivoImportar" style="display:none" accept=".json,.xml">
                 </label>
             </div>
 
-            <h3>📊 Resumo Financeiro Hoje</h3>
+            <h3>📊 Resumo de Hoje</h3>
             <div class="cards-financeiro">
                 <div class="mini-card card-pix">Pix: <span id="faturamento-pix">R$ 0,00</span></div>
                 <div class="mini-card card-dinheiro">Dinheiro: <span id="faturamento-dinheiro">R$ 0,00</span></div>
@@ -52,7 +73,7 @@
         </section>
 
         <details>
-            <summary>📦 Cadastrar Novo Produto</summary>
+            <summary>📦 Cadastro Manual</summary>
             <div class="caixa-cadastro">
                 <input type="text" id="codigoBarra" placeholder="Código de Barras">
                 <input type="text" id="nomeProduto" placeholder="Nome do Produto">
