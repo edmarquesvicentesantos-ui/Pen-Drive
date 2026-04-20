@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, where, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, where, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAZf_RpFnTCS3DxqKIxpK7CEh5aTrLMEs4",
@@ -12,93 +12,50 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-let carrinho = [];
+let contaAtual = [];
 
-// --- FUNÇÃO DE VENDA (BIPAR) ---
+// BUSCAR PRODUTO E ADICIONAR NA CONTA DA MESA
 document.getElementById('biparVenda').addEventListener('change', async (e) => {
     const code = e.target.value.trim();
     if (!code) return;
 
     const q = query(collection(db, "estoque"), where("codigo", "==", code));
-    const querySnapshot = await getDocs(q);
+    const snap = await getDocs(q);
 
-    if (!querySnapshot.empty) {
-        const produtoDoc = querySnapshot.docs[0];
-        const produto = produtoDoc.data();
-        carrinho.push({ id: produtoDoc.id, ...produto });
-        atualizarCarrinho();
-    } else {
-        alert("Produto não cadastrado!");
-    }
-    e.target.value = "";
-    e.target.focus();
+    if (!snap.empty) {
+        const p = snap.docs[0].data();
+        contaAtual.push(p);
+        renderizarCarrinho();
+    } else { alert("Produto não cadastrado!"); }
+    e.target.value = ""; 
 });
 
-function atualizarCarrinho() {
+function renderizarCarrinho() {
     const lista = document.getElementById('lista-carrinho');
-    const totalElt = document.getElementById('total-venda');
-    lista.innerHTML = "";
-    let total = 0;
-
-    carrinho.forEach((item, index) => {
-        total += item.preco;
-        lista.innerHTML += `<div class="item-carrinho">${item.nome} - R$ ${item.preco.toFixed(2)}</div>`;
-    });
-    totalElt.innerText = `R$ ${total.toFixed(2)}`;
+    lista.innerHTML = contaAtual.map(i => `<div class="item"><span>${i.nome}</span> <span>R$ ${i.preco.toFixed(2)}</span></div>`).join('');
 }
 
+// FINALIZAR E SALVAR NO CAIXA
 window.finalizarVenda = async () => {
-    const metodo = document.getElementById('metodoPagamento').value;
-    const cliente = document.getElementById('identificacaoCliente').value || "Consumidor";
+    const cliente = document.getElementById('identificacaoCliente').value;
+    const pagamento = document.getElementById('metodoPagamento').value;
+    const total = contaAtual.reduce((acc, i) => acc + i.preco, 0);
 
-    if (carrinho.length === 0) return alert("Carrinho vazio!");
+    if (!cliente || total === 0) return alert("Identifique a mesa e adicione itens!");
 
-    try {
-        await addDoc(collection(db, "vendas"), {
-            itens: carrinho,
-            total: carrinho.reduce((acc, i) => acc + i.preco, 0),
-            metodo: metodo,
-            cliente: cliente,
-            data: new Date()
-        });
+    await addDoc(collection(db, "vendas"), {
+        cliente, pagamento, total, data: new Date(), itens: contaAtual
+    });
 
-        alert(`Venda Finalizada! Cliente: ${cliente}`);
-        carrinho = [];
-        atualizarCarrinho();
-        document.getElementById('identificacaoCliente').value = "";
-    } catch (e) {
-        alert("Erro ao salvar venda: " + e);
-    }
+    alert(`Conta da ${cliente} fechada: R$ ${total.toFixed(2)}`);
+    contaAtual = [];
+    renderizarCarrinho();
+    document.getElementById('identificacaoCliente').value = "";
 };
 
-// --- FUNÇÕES DE ESTOQUE (MANTER AS ANTERIORES) ---
-window.salvarProduto = async () => {
-    const nome = document.getElementById('nomeProduto').value;
-    const preco = document.getElementById('precoProduto').value;
-    const custo = document.getElementById('custoProduto').value;
-    const codigo = document.getElementById('codigoBarra').value;
-
-    await addDoc(collection(db, "estoque"), {
-        nome: nome.toUpperCase(),
-        preco: parseFloat(preco),
-        custo: parseFloat(custo),
-        codigo: codigo,
-        data: new Date()
-    });
-    alert("Produto Cadastrado!");
-};
-
-onSnapshot(query(collection(db, "estoque"), orderBy("data", "desc")), (snap) => {
-    const grid = document.getElementById('grid-produtos');
-    grid.innerHTML = "";
-    snap.forEach(doc => {
-        const p = doc.data();
-        const lucro = p.preco - p.custo;
-        grid.innerHTML += `
-            <div class="card">
-                <h4>${p.nome}</h4>
-                <span class="preco">R$ ${p.preco.toFixed(2)}</span>
-                <small>Lucro: R$ ${lucro.toFixed(2)}</small>
-            </div>`;
-    });
+// ATUALIZAR RESUMO DO CAIXA DO DIA
+onSnapshot(collection(db, "vendas"), (snap) => {
+    let totalDia = 0;
+    snap.forEach(doc => totalDia += doc.data().total);
+    document.getElementById('total-caixa-dia').innerText = `R$ ${totalDia.toFixed(2)}`;
 });
