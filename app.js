@@ -13,52 +13,70 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// BUSCA AUTOMÁTICA NA INTERNET AO BIPAR
-document.getElementById('codigoBarra').addEventListener('change', async (e) => {
-    const code = e.target.value;
-    if (code.length > 8) {
-        document.getElementById('status-busca').innerText = "Buscando na Internet... 🔍";
-        try {
-            const res = await fetch(`https://world.openfoodfacts.org/api/v2/product/${code}.json`);
-            const data = await res.json();
-            if (data.status === 1) {
-                document.getElementById('nomeProduto').value = data.product.product_name || "";
-                document.getElementById('fotoProduto').value = data.product.image_url || "";
-                document.getElementById('status-busca').innerText = "Encontrado! ✅";
-            } else {
-                document.getElementById('status-busca').innerText = "Não encontrado. Digite manual.";
-            }
-        } catch (err) {
-            document.getElementById('status-busca').innerText = "Erro na busca.";
+// FUNÇÃO PARA BUSCAR NA INTERNET
+window.buscarProduto = async () => {
+    const code = document.getElementById('codigoBarra').value.trim();
+    const status = document.getElementById('status-busca');
+    
+    if (code.length < 8) return alert("Bipe um código válido!");
+
+    status.innerText = "Buscando na Internet... 🔍";
+    
+    try {
+        const res = await fetch(`https://world.openfoodfacts.org/api/v2/product/${code}.json`);
+        const data = await res.json();
+        
+        if (data.status === 1) {
+            document.getElementById('nomeProduto').value = data.product.product_name || "";
+            document.getElementById('fotoProduto').value = data.product.image_url || "";
+            status.innerText = "Encontrado! ✅";
+        } else {
+            status.innerText = "Não encontrado. Digite manual.";
         }
+    } catch (e) {
+        status.innerText = "Erro na busca.";
     }
-});
+};
 
+// SALVAR NO FIREBASE
 window.salvarProduto = async () => {
-    const campos = ['codigoBarra', 'nomeProduto', 'custoProduto', 'precoProduto', 'categoriaProduto', 'fotoProduto'];
-    const dados = {};
-    campos.forEach(c => dados[c] = document.getElementById(c).value);
+    const codigo = document.getElementById('codigoBarra').value;
+    const nome = document.getElementById('nomeProduto').value;
+    const custo = document.getElementById('custoProduto').value;
+    const preco = document.getElementById('precoProduto').value;
+    const categoria = document.getElementById('categoriaProduto').value;
+    const foto = document.getElementById('fotoProduto').value;
 
-    if (!dados.nomeProduto || !dados.precoProduto) return alert("Nome e Preço são obrigatórios!");
+    if (!nome || !preco) return alert("Nome e Preço são obrigatórios!");
 
     try {
         await addDoc(collection(db, "estoque"), {
-            codigo: dados.codigoBarra,
-            nome: dados.nomeProduto.toUpperCase(),
-            custo: parseFloat(dados.custoProduto) || 0,
-            preco: parseFloat(dados.precoProduto) || 0,
-            categoria: dados.categoriaProduto,
-            foto: dados.fotoProduto || "https://via.placeholder.com/150?text=Boteco+934",
+            codigo: codigo || "S/C",
+            nome: nome.toUpperCase(),
+            custo: parseFloat(custo) || 0,
+            preco: parseFloat(preco) || 0,
+            categoria: categoria,
+            foto: foto || "https://via.placeholder.com/150?text=Boteco+934",
             data: new Date()
         });
-        campos.forEach(c => document.getElementById(c).value = "");
+        
+        // Limpar campos
+        ['codigoBarra', 'nomeProduto', 'custoProduto', 'precoProduto', 'fotoProduto'].forEach(id => {
+            document.getElementById(id).value = "";
+        });
+        document.getElementById('status-busca').innerText = "Salvo com sucesso!";
         document.getElementById('codigoBarra').focus();
-    } catch (e) { alert("Erro ao salvar: " + e); }
+        
+    } catch (e) {
+        alert("Erro ao salvar: " + e);
+    }
 };
 
+// LISTAR PRODUTOS COM LUCRO E MARGEM
 onSnapshot(query(collection(db, "estoque"), orderBy("data", "desc")), (snap) => {
     const grid = document.getElementById('grid-produtos');
     grid.innerHTML = "";
+    
     snap.forEach(doc => {
         const p = doc.data();
         const lucro = p.preco - p.custo;
@@ -66,13 +84,13 @@ onSnapshot(query(collection(db, "estoque"), orderBy("data", "desc")), (snap) => 
 
         grid.innerHTML += `
             <div class="card">
-                <img src="${p.foto}" style="width:100%; height:100px; object-fit:cover; border-radius:8px;">
-                <span class="categoria-tag">${p.categoria}</span>
+                <span class="tag">${p.categoria}</span>
+                <img src="${p.foto}" class="img-produto" onerror="this.src='https://via.placeholder.com/150?text=Sem+Foto'">
                 <h4>${p.nome}</h4>
-                <span class="preco">R$ ${p.preco.toFixed(2)}</span>
-                <div class="lucro-info">
-                    <small>Lucro: R$ ${lucro.toFixed(2)}</small>
-                    <small>Margem: ${margem.toFixed(1)}%</small>
+                <span class="preco-venda">R$ ${p.preco.toFixed(2)}</span>
+                <div class="info-lucro">
+                    <span class="lucro-reais">Lucro: R$ ${lucro.toFixed(2)}</span>
+                    <span class="margem-percent">Margem: ${margem.toFixed(1)}%</span>
                 </div>
             </div>
         `;
