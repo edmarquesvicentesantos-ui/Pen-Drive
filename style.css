@@ -1,22 +1,13 @@
-﻿* { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-body { background-color: #0f0f0f; color: #e0e0e0; margin: 0; padding: 15px; }
-
+* { box-sizing: border-box; font-family: sans-serif; }
+body { background-color: #0d0d0d; color: #fff; margin: 0; padding: 15px; }
 .container { max-width: 600px; margin: auto; }
-
-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
-h1 { font-size: 1.5rem; color: #2ecc71; margin: 0; }
-.status { font-size: 0.7rem; color: #f1c40f; }
-
-.painel-cadastro { background: #1a1a1a; padding: 15px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-.inputs { display: flex; gap: 8px; }
-input { background: #262626; border: 1px solid #333; color: white; padding: 10px; border-radius: 8px; width: 100%; }
-button { background: #2ecc71; border: none; color: white; padding: 10px 15px; border-radius: 8px; cursor: pointer; }
-
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; color: #2ecc71; }
+.painel-cadastro { background: #1a1a1a; padding: 15px; border-radius: 12px; margin-bottom: 20px; }
+.inputs { display: flex; flex-direction: column; gap: 10px; }
+input { background: #262626; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; font-size: 1rem; }
+button { background: #2ecc71; border: none; color: #fff; padding: 15px; border-radius: 8px; cursor: pointer; font-size: 1.2rem; }
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-/* Estilo do Card Compacto que você pediu */
-.card { background: #1a1a1a; border-radius: 10px; padding: 12px; border-bottom: 3px solid #2ecc71; transition: 0.2s; }
-.card:active { transform: scale(0.95); background: #262626; }
-.card h4 { margin: 0 0 5px 0; font-size: 0.9rem; text-transform: uppercase; }
-.card .preco { color: #2ecc71; font-weight: bold; font-size: 1.1rem; display: block; }
-.card .lucro { font-size: 0.7rem; color: #888; }
+.card { background: #1a1a1a; border-radius: 10px; padding: 15px; border-bottom: 4px solid #2ecc71; position: relative; }
+.card h4 { margin: 0; font-size: 0.9rem; text-transform: uppercase; }
+.card .preco { color: #2ecc71; font-weight: bold; font-size: 1.2rem; display: block; margin: 5px 0; }
+.card .cod { font-size: 0.7rem; color: #777; display: block; }
