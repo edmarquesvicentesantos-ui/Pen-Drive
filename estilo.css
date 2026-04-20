@@ -1,14 +1,88 @@
-/* Adicione no fim do seu arquivo */
-.caixa-relatorio { background: #111; padding: 15px; border-radius: 10px; margin-top: 20px; border: 1px solid #333; }
-.cards-financeiro { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-.mini-card { background: #222; padding: 10px; border-radius: 5px; font-size: 14px; border-left: 4px solid #2ecc71; }
-.mini-card.pendura { border-left-color: #e74c3c; color: #e74c3c; }
-.mini-card span { display: block; font-weight: bold; font-size: 16px; color: #fff; }
-.penduras-scroll { list-style: none; padding: 0; max-height: 150px; overflow-y: auto; background: #000; border-radius: 5px; }
-.penduras-scroll li { padding: 8px; border-bottom: 1px solid #222; font-size: 14px; color: #e74c3c; }
+/* TUDO BRANCO E CLARO PARA O BOTECO 934 */
+body { 
+    background: #000; 
+    color: #ffffff; /* Letras Brancas em tudo */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    padding: 10px; 
+}
 
-.penduras-scroll button { 
-    margin-left: 10px; 
-    border-radius: 4px; 
-    cursor: pointer; 
+/* TOTAL NO TOPO BEM ACESO */
+.total-topo { 
+    font-size: 26px; 
+    font-weight: bold; 
+    color: #00ff00; /* Verde limão bem claro */
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+/* CAMPO DE BIPAR - TEXTO GRANDE E BRANCO */
+#biparVenda { 
+    width: 98%; 
+    padding: 15px; 
+    background: #1a1a1a; 
+    border: 2px solid #2ecc71; 
+    color: #ffffff !important; /* Texto que você bipa fica branco */
+    font-size: 22px; 
+    font-weight: bold;
+    border-radius: 8px;
+}
+
+/* LISTA DE ITENS - CONTRASTE MÁXIMO */
+.item-carrinho { 
+    display: flex; 
+    justify-content: space-between; 
+    padding: 12px; 
+    border-bottom: 1px solid #333; 
+    font-size: 18px; 
+    color: #ffffff; /* Texto branco */
+    background: #080808;
+}
+
+/* CARDS DE FATURAMENTO (Pix, Dinheiro, etc) */
+.mini-card { 
+    background: #1a1a1a; 
+    padding: 12px; 
+    border-radius: 8px; 
+    border: 1px solid #444;
+    color: #ffffff; /* Título do card branco */
+}
+
+.mini-card span { 
+    display: block; 
+    font-size: 20px; 
+    font-weight: bold; 
+    color: #00ff00; /* Valores em verde neon para brilhar */
+    margin-top: 5px;
+}
+
+/* LISTA DE QUEM DEVE (PENDURAS) */
+#lista-penduras li { 
+    color: #ff4d4d; /* Vermelho vivo para destacar dívida */
+    font-size: 18px; 
+    font-weight: bold;
+    padding: 10px;
+    background: #111;
+    margin-bottom: 5px;
+    border-radius: 5px;
+}
+
+/* BOTÃO FINALIZAR */
+button { 
+    background: #2ecc71; 
+    color: #000; 
+    font-weight: 900; 
+    font-size: 18px; 
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* TEXTO DENTRO DOS CAMPOS (Mesa, Nome) */
+input::placeholder {
+    color: #aaaaaa; /* Cinza claro para o fundo do campo */
+}
+
+input {
+    color: #ffffff !important; /* Tudo que você digita fica branco */
+    background: #222;
+    border: 1px solid #444;
 }
