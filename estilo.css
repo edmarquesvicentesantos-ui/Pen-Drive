@@ -1,36 +1,119 @@
-body { margin: 0; background: #222; font-family: 'Courier New', Courier, monospace; height: 100vh; overflow: hidden; }
-.monitor-caixa { display: grid; grid-template-columns: 1fr 380px; height: 100vh; padding: 10px; gap: 10px; box-sizing: border-box; }
+:root {
+    --verde-neon: #1fcc7d;
+    --vermelho-alerta: #ff5e5e;
+    --bg-deep: #0a0a0a;
+    --glass: rgba(255, 255, 255, 0.03);
+}
 
-/* ESTILO DO CUPOM */
-.coluna-cupom { background: #fff; border-radius: 4px; display: flex; flex-direction: column; padding: 25px; box-shadow: inset 0 0 100px rgba(0,0,0,0.05); }
-.cabecalho-loja { text-align: center; border-bottom: 2px dashed #000; margin-bottom: 20px; }
-.cabecalho-loja h1 { margin: 0; font-size: 32px; color: #000; }
+body { 
+    margin: 0; 
+    background: var(--bg-deep); 
+    font-family: 'Inter', 'Segoe UI', sans-serif; 
+    height: 100vh; 
+    color: white;
+}
 
-.area-lista { flex-grow: 1; overflow-y: auto; }
-table { width: 100%; border-collapse: collapse; font-weight: bold; }
-th { text-align: left; border-bottom: 1px solid #000; padding: 10px 5px; font-size: 14px; }
-td { padding: 12px 5px; font-size: 18px; color: #000; border-bottom: 1px dashed #eee; }
+.pdv-layout { 
+    display: grid; 
+    grid-template-columns: 1fr 400px; 
+    height: 100vh; 
+    gap: 10px; 
+    padding: 10px; 
+    box-sizing: border-box; 
+}
 
-.totalizador { background: #000; color: #1fcc7d; padding: 20px; border-radius: 8px; margin-top: 20px; text-align: right; }
-.label-total { font-size: 18px; font-family: sans-serif; }
-.valor-total { font-size: 70px; font-weight: bold; }
+/* COLUNA DO CUPOM - ESTILO PAPEL */
+.area-cupom { 
+    background: #ffffff; 
+    border-radius: 12px; 
+    display: flex; 
+    flex-direction: column; 
+    padding: 30px; 
+    color: #333;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
 
-/* ESTILO COMANDOS */
-.coluna-comandos { background: #1a1a1a; padding: 15px; border-radius: 8px; display: flex; flex-direction: column; gap: 15px; color: #fff; font-family: sans-serif; }
-label { font-size: 12px; color: #1fcc7d; font-weight: bold; display: block; margin-bottom: 5px; }
+.cabecalho-loja h1 { 
+    margin: 0; 
+    font-size: 38px; 
+    color: #000; 
+    text-align: center;
+    letter-spacing: -1px;
+}
 
-#biparVenda { width: 100%; padding: 15px; font-size: 24px; background: #000; border: 2px solid #1fcc7d; color: #fff; border-radius: 8px; box-sizing: border-box; }
-#identificacaoCliente { width: 100%; padding: 12px; background: #333; border: 1px solid #444; color: #fff; border-radius: 5px; box-sizing: border-box; }
+.tabela-venda { 
+    flex-grow: 1; 
+    margin-top: 20px; 
+    border-top: 2px dashed #ccc;
+}
 
-.botoes-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.btn-pg { background: #333; color: #fff; border: none; padding: 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; }
-.btn-pg.ativo { background: #1fcc7d; color: #000; }
-.btn-vermelho { background: #b03a2e; }
+table { width: 100%; border-collapse: collapse; font-size: 20px; }
+th { text-align: left; padding: 15px 5px; color: #888; font-size: 14px; text-transform: uppercase; }
+td { padding: 15px 5px; border-bottom: 1px solid #f0f0f0; font-weight: 600; }
 
-.btn-finalizar { background: #1fcc7d; color: #000; border: none; padding: 20px; font-size: 22px; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 10px; }
+.painel-total { 
+    background: #000; 
+    color: var(--verde-neon); 
+    padding: 25px; 
+    border-radius: 12px; 
+    text-align: right; 
+    margin-top: 20px;
+}
 
-.faturamento-dia { background: #000; padding: 15px; border-radius: 8px; font-size: 14px; }
-.fat-item { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.painel-total span { font-size: 85px; font-weight: 900; }
 
-.utilitarios { display: flex; gap: 8px; margin-top: auto; }
-.utilitarios button, .btn-upload { flex: 1; background: #444; color: #fff; padding: 10px; border: none; border-radius: 5px; font-size: 11px; cursor: pointer; text-align: center; }
+/* COLUNA DE COMANDOS - ESTILO GLASS */
+.area-comandos { 
+    background: var(--glass); 
+    backdrop-filter: blur(10px); 
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 15px; 
+    padding: 20px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 15px;
+}
+
+.campo-bip input { 
+    width: 100%; 
+    padding: 20px; 
+    font-size: 28px; 
+    background: rgba(0,0,0,0.5); 
+    border: 2px solid var(--verde-neon); 
+    color: white; 
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+.grade-pagamento { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 10px; 
+}
+
+.btn-pg { 
+    height: 80px; 
+    border-radius: 12px; 
+    border: 1px solid rgba(255,255,255,0.1); 
+    background: rgba(255,255,255,0.05); 
+    color: white; 
+    font-weight: bold; 
+    cursor: pointer; 
+    transition: 0.3s;
+}
+
+.btn-pg:hover { background: rgba(255,255,255,0.15); }
+.btn-pg.ativo { background: var(--verde-neon); color: black; border: none; box-shadow: 0 0 20px rgba(31, 204, 125, 0.4); }
+.btn-pendura { border-left: 5px solid var(--vermelho-alerta); }
+
+.btn-finalizar { 
+    background: var(--verde-neon); 
+    color: black; 
+    font-size: 24px; 
+    font-weight: 900; 
+    padding: 30px; 
+    border: none; 
+    border-radius: 15px; 
+    cursor: pointer; 
+    margin-top: auto;
+}
