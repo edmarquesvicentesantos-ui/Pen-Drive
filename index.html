@@ -1,36 +1,34 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boteco 934 | PDV DRE</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Boteco 934 | PDV</title>
+    <link rel="stylesheet" href="estilo.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-beer"></i> Boteco 934</h1>
-            <div id="status-firebase" class="status">Conectando...</div>
+            <h1><i class="fas fa-barcode"></i> Boteco 934</h1>
+            <div id="status" class="status">Conectado 🟢</div>
         </header>
 
         <section class="painel-cadastro">
-            <h3>Novo Produto</h3>
             <div class="inputs">
-                <input type="text" id="nomeProduto" placeholder="Nome (Ex: Heineken)">
+                <input type="text" id="codigoBarra" placeholder="Bipar Código" autofocus>
+                <input type="text" id="nomeProduto" placeholder="Nome do Produto">
                 <input type="number" id="custoProduto" placeholder="Custo R$">
                 <input type="number" id="precoProduto" placeholder="Venda R$">
-                <button onclick="salvarProduto()"><i class="fas fa-plus"></i></button>
+                <button onclick="salvarProduto()"><i class="fas fa-save"></i></button>
             </div>
         </section>
 
         <section class="vitrine">
             <h3>Seu Estoque</h3>
-            <div id="grid-produtos" class="grid">
-                </div>
+            <div id="grid-produtos" class="grid"></div>
         </section>
     </div>
-
     <script type="module" src="app.js"></script>
 </body>
 </html>
