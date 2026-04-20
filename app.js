@@ -30,7 +30,10 @@ window.salvarProduto = async () => {
             data: new Date()
         });
         
-        document.querySelectorAll('input').forEach(i => i.value = "");
+        document.getElementById('codigoBarra').value = "";
+        document.getElementById('nomeProduto').value = "";
+        document.getElementById('custoProduto').value = "";
+        document.getElementById('precoProduto').value = "";
         document.getElementById('codigoBarra').focus();
     } catch (e) {
         alert("Erro: " + e);
@@ -42,11 +45,20 @@ onSnapshot(query(collection(db, "estoque"), orderBy("data", "desc")), (snap) => 
     grid.innerHTML = "";
     snap.forEach(doc => {
         const p = doc.data();
+        
+        // Cálculos de Lucro e Margem
+        const lucroValor = p.preco - p.custo;
+        const margemPorcentagem = p.preco > 0 ? (lucroValor / p.preco) * 100 : 0;
+
         grid.innerHTML += `
             <div class="card">
                 <span class="barcode">COD: ${p.codigo}</span>
                 <h4>${p.nome}</h4>
-                <span class="preco">R$ ${p.preco.toFixed(2)}</span>
+                <span class="preco">Venda: R$ ${p.preco.toFixed(2)}</span>
+                <div style="background: #262626; padding: 5px; border-radius: 5px; margin-top: 8px;">
+                    <small style="color: #2ecc71; display: block;">Lucro: R$ ${lucroValor.toFixed(2)}</small>
+                    <small style="color: #3498db; display: block;">Margem: ${margemPorcentagem.toFixed(1)}%</small>
+                </div>
             </div>
         `;
     });
