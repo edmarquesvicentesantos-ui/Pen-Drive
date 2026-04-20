@@ -27,7 +27,17 @@
                 <button onclick="finalizarVenda()">FINALIZAR VENDA</button>
             </div>
         </section>
-
+<details>
+    <summary>📦 Cadastrar Novo Produto / Destilado</summary>
+    <div class="caixa-cadastro">
+        <input type="text" id="codigoBarra" placeholder="Cód. Barra">
+        <input type="text" id="nomeProduto" placeholder="Nome (Ex: Pitu Garrafa)">
+        <input type="number" id="custoProduto" placeholder="Custo da Garrafa">
+        <input type="number" id="precoProduto" placeholder="Preço de Venda">
+        <input type="number" id="qtdDoses" placeholder="Rende quantas doses? (Ex: 15)">
+        <button onclick="salvarProduto()">OK</button>
+    </div>
+</details>
         <section class="caixa-relatorio">
             <h3>📊 Resumo de Hoje</h3>
             <div class="cards-financeiro">
