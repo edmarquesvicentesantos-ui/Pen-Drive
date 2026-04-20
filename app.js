@@ -8,7 +8,43 @@ const firebaseConfig = {
     storageBucket: "boteco934-afc3f.appspot.com",
     messagingSenderId: "182023728304",
     appId: "1:182023728304:web:e716c52a0d91b192727ae6"
+};// Função para os botões de atalho (adiciona sem precisar bipar)
+window.adicionarPorNome = async (nomeProduto) => {
+    const q = query(collection(db, "estoque"), where("nome", "==", nomeProduto));
+    const snap = await getDocs(q);
+    
+    if (!snap.empty) {
+        const d = snap.docs[0];
+        const p = d.data();
+        const ex = carrinho.find(i => i.nome === nomeProduto);
+        
+        if (ex) {
+            ex.qtd++;
+            ex.subtotal = ex.qtd * p.precoVenda;
+        } else {
+            carrinho.push({ nome: p.nome, preco: p.precoVenda, codigo: p.codigo, qtd: 1, subtotal: p.precoVenda, idBanco: d.id });
+        }
+        renderizar();
+    }
 };
+
+// Monitor de Penduras (mostra quem deve no painel lateral)
+onSnapshot(collection(db, "vendas"), (s) => {
+    const penduras = {};
+    s.forEach(d => {
+        const v = d.data();
+        if (v.pagamento === "Pendura") {
+            penduras[v.cliente] = (penduras[v.cliente] || 0) + v.total;
+        }
+    });
+
+    const lista = document.getElementById('lista-penduras');
+    lista.innerHTML = Object.entries(penduras).map(([nome, total]) => `
+        <div class="item-pendura">
+            ${nome} <span>R$ ${total.toFixed(2)}</span>
+        </div>
+    `).join('');
+});
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
