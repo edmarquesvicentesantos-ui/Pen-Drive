@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// Suas configurações do Boteco934 do print image_091cfd.jpg
 const firebaseConfig = {
   apiKey: "AIzaSyAZf_RpFnTCS3DxqKIxpK7CEh5aTrLMEs4",
   authDomain: "boteco934-afc3f.firebaseapp.com",
@@ -14,66 +13,66 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// FUNÇÃO PARA SALVAR O PRODUTO
-window.salvarProduto = async () => {
-    const codigo = document.getElementById('codigoBarra').value;
-    const nome = document.getElementById('nomeProduto').value;
-    const custo = document.getElementById('custoProduto').value;
-    const preco = document.getElementById('precoProduto').value;
+// BUSCA AUTOMÁTICA NA INTERNET AO BIPAR
+document.getElementById('codigoBarra').addEventListener('change', async (e) => {
+    const code = e.target.value;
+    if (code.length > 8) {
+        document.getElementById('status-busca').innerText = "Buscando na Internet... 🔍";
+        try {
+            const res = await fetch(`https://world.openfoodfacts.org/api/v2/product/${code}.json`);
+            const data = await res.json();
+            if (data.status === 1) {
+                document.getElementById('nomeProduto').value = data.product.product_name || "";
+                document.getElementById('fotoProduto').value = data.product.image_url || "";
+                document.getElementById('status-busca').innerText = "Encontrado! ✅";
+            } else {
+                document.getElementById('status-busca').innerText = "Não encontrado. Digite manual.";
+            }
+        } catch (err) {
+            document.getElementById('status-busca').innerText = "Erro na busca.";
+        }
+    }
+});
 
-    if (!nome || !preco) return alert("Por favor, preencha o Nome e o Preço de Venda!");
+window.salvarProduto = async () => {
+    const campos = ['codigoBarra', 'nomeProduto', 'custoProduto', 'precoProduto', 'categoriaProduto', 'fotoProduto'];
+    const dados = {};
+    campos.forEach(c => dados[c] = document.getElementById(c).value);
+
+    if (!dados.nomeProduto || !dados.precoProduto) return alert("Nome e Preço são obrigatórios!");
 
     try {
         await addDoc(collection(db, "estoque"), {
-            codigo: codigo || "S/C",
-            nome: nome.toUpperCase(),
-            custo: parseFloat(custo) || 0,
-            preco: parseFloat(preco) || 0,
+            codigo: dados.codigoBarra,
+            nome: dados.nomeProduto.toUpperCase(),
+            custo: parseFloat(dados.custoProduto) || 0,
+            preco: parseFloat(dados.precoProduto) || 0,
+            categoria: dados.categoriaProduto,
+            foto: dados.fotoProduto || "https://via.placeholder.com/150?text=Boteco+934",
             data: new Date()
         });
-        
-        // Limpa os campos e volta o foco para o código de barras
-        document.getElementById('codigoBarra').value = "";
-        document.getElementById('nomeProduto').value = "";
-        document.getElementById('custoProduto').value = "";
-        document.getElementById('precoProduto').value = "";
+        campos.forEach(c => document.getElementById(c).value = "");
         document.getElementById('codigoBarra').focus();
-        
-    } catch (e) {
-        alert("Erro ao salvar no banco de dados: " + e);
-    }
+    } catch (e) { alert("Erro ao salvar: " + e); }
 };
 
-// MOSTRAR O ESTOQUE COM LUCRO E MARGEM EM TEMPO REAL
-const q = query(collection(db, "estoque"), orderBy("data", "desc"));
-onSnapshot(q, (snapshot) => {
+onSnapshot(query(collection(db, "estoque"), orderBy("data", "desc")), (snap) => {
     const grid = document.getElementById('grid-produtos');
     grid.innerHTML = "";
-    
-    snapshot.forEach((doc) => {
+    snap.forEach(doc => {
         const p = doc.data();
-        
-        // CÁLCULO DO LUCRO QUE REALMENTE VAI PARA O BOLSO
-        const custoReal = p.custo || 0;
-        const vendaReal = p.preco || 0;
-        const lucroValor = vendaReal - custoReal;
-        
-        // CÁLCULO DA MARGEM REAL (%)
-        const margemReal = vendaReal > 0 ? (lucroValor / vendaReal) * 100 : 0;
+        const lucro = p.preco - p.custo;
+        const margem = p.preco > 0 ? (lucro / p.preco) * 100 : 0;
 
         grid.innerHTML += `
             <div class="card">
-                <span class="barcode">COD: ${p.codigo}</span>
+                <img src="${p.foto}" style="width:100%; height:100px; object-fit:cover; border-radius:8px;">
+                <span class="categoria-tag">${p.categoria}</span>
                 <h4>${p.nome}</h4>
-                <span class="preco">VENDA: R$ ${vendaReal.toFixed(2)}</span>
-                
-                <div style="background: rgba(46, 204, 113, 0.1); padding: 8px; border-radius: 8px; margin-top: 10px; border: 1px solid #222;">
-                    <small style="color: #2ecc71; display: block; font-weight: bold;">
-                        Lucro Real: R$ ${lucroValor.toFixed(2)}
-                    </small>
-                    <small style="color: #3498db; display: block; font-weight: bold;">
-                        Margem: ${margemReal.toFixed(1)}%
-                    </small>
+                <span class="preco">R$ ${p.preco.toFixed(2)}</span>
+                <div class="lucro-info">
+                    <small>Lucro: R$ ${lucro.toFixed(2)}</small>
+                    <small>Margem: ${margem.toFixed(1)}%</small>
                 </div>
             </div>
         `;
