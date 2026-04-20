@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boteco 934 | PDV Premium</title>
+    <title>Boteco 934 | PDV WhatsApp</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
@@ -25,7 +25,7 @@
                     <option value="Cartão">Cartão</option>
                     <option value="Pendura">Pendura</option>
                 </select>
-                <button onclick="finalizarVenda()">FINALIZAR E GERAR RECIBO 🍻</button>
+                <button onclick="finalizarVenda()">FINALIZAR E ENVIAR WHATSAPP 🍻</button>
             </div>
         </section>
 
@@ -39,14 +39,14 @@
             </div>
 
             <h3>📝 Penduras Ativas</h3>
-            <ul id="lista-penduras"></ul>
+            <ul id="lista-penduras" class="lista-limpa"></ul>
 
-            <h3>🥃 Inventário de Doses e Estoque</h3>
+            <h3>🥃 Inventário (Doses e Estoque)</h3>
             <div id="grid-estoque" class="grid-estoque"></div>
         </section>
 
         <details>
-            <summary>📦 Cadastrar Novo (Garrafa ou Unidade)</summary>
+            <summary>📦 Cadastrar Produto/Destilado</summary>
             <div class="caixa-cadastro">
                 <input type="text" id="codigoBarra" placeholder="Código de Barras">
                 <input type="text" id="nomeProduto" placeholder="Nome (Ex: Pitu 1L)">
