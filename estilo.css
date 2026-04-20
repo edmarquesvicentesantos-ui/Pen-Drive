@@ -1,33 +1,32 @@
-body { background: #050505; color: #fff; font-family: 'Arial Black', sans-serif; margin: 0; overflow: hidden; }
-.tela-pdv { display: grid; grid-template-columns: 1fr 320px; height: 100vh; }
+:root { --verde: #1fcc7d; --cinza-escuro: #1a1a1a; --preto: #0d0d0d; }
+body { margin: 0; background: var(--preto); color: white; font-family: 'Segoe UI', sans-serif; }
 
-/* AREA DO CLIENTE */
-.area-cliente { display: flex; flex-direction: column; background: #000; padding: 20px; border-right: 2px solid #1fcc7d; }
-.cabecalho-cliente { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.nome-loja { font-size: 24px; color: #1fcc7d; }
-.total-grande { font-size: 80px; color: #1fcc7d; text-shadow: 0 0 20px rgba(31, 204, 125, 0.3); }
+.pdv-container { display: grid; grid-template-columns: 1fr 350px; height: 100vh; gap: 5px; padding: 5px; box-sizing: border-box; }
 
-.lista-produtos { flex-grow: 1; overflow-y: auto; background: #0a0a0a; border-radius: 10px; padding: 10px; }
-table { width: 100%; border-collapse: collapse; }
-th { color: #555; text-align: left; font-size: 14px; border-bottom: 2px solid #222; padding: 10px; }
-td { padding: 20px 10px; border-bottom: 1px solid #1a1a1a; font-size: 22px; }
+/* COLUNA ESQUERDA */
+.venda-ativa { background: #fff; color: #333; border-radius: 8px; display: flex; flex-direction: column; padding: 15px; }
+.topo-venda { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--preto); margin-bottom: 15px; }
+.display-total { background: var(--preto); color: var(--verde); padding: 10px 20px; font-size: 40px; font-weight: bold; border-radius: 5px; }
 
-.barra-bip { margin-top: 20px; }
-#biparVenda { width: 100%; padding: 20px; font-size: 30px; background: #111; border: 3px solid #1fcc7d; color: #fff; border-radius: 10px; outline: none; }
+#biparVenda { width: 100%; padding: 15px; font-size: 25px; border: 2px solid #ccc; border-radius: 5px; box-sizing: border-box; margin-bottom: 15px; }
 
-/* AREA DE CONTROLE */
-.area-controle { background: #141414; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-.card-controle, .card-resumo { background: #1e1e1e; padding: 15px; border-radius: 12px; border: 1px solid #333; }
-h3 { margin-top: 0; font-size: 14px; color: #1fcc7d; border-bottom: 1px solid #333; padding-bottom: 5px; }
+.tabela-container { flex-grow: 1; overflow-y: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 18px; }
+th { background: #f0f0f0; padding: 12px; text-align: left; border-bottom: 2px solid #ddd; }
+td { padding: 12px; border-bottom: 1px solid #eee; }
 
-input, select, .btn-finalizar { width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; border: 1px solid #444; background: #000; color: #fff; font-size: 16px; }
-.btn-finalizar { background: #1fcc7d; color: #000; font-weight: bold; border: none; cursor: pointer; height: 60px; font-size: 20px; }
+/* COLUNA DIREITA */
+.controles-pdv { display: flex; flex-direction: column; gap: 10px; }
+.card-pagamento { background: var(--cinza-escuro); padding: 15px; border-radius: 8px; }
+.botoes-pagamento { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 10px; }
+.btn-pag { background: #333; color: white; border: none; padding: 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+.btn-pag.ativo { background: var(--verde); color: black; }
+.btn-pendura { background: #ff5e5e; }
 
-.resumo-linha { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #222; font-size: 16px; }
-.acoes-extras { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.acoes-extras button, .btn-import { background: #333; color: #fff; padding: 10px; border: none; border-radius: 8px; font-size: 12px; cursor: pointer; text-align: center; }
+.btn-finalizar { background: var(--verde); color: black; border: none; padding: 25px; font-size: 20px; font-weight: bold; border-radius: 8px; cursor: pointer; }
 
-/* MODAL */
-.modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:none; align-items:center; justify-content:center; }
-.modal-content { background:#1e1e1e; padding:30px; border-radius:15px; width:90%; max-width:500px; }
-.scroll-conferencia { max-height: 300px; overflow-y: auto; margin: 20px 0; background: #000; padding: 10px; }
+.resumo-caixa { background: var(--cinza-escuro); padding: 15px; border-radius: 8px; }
+.linha-caixa { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #333; }
+
+.acoes-sistema { display: flex; gap: 5px; }
+.acoes-sistema button, .btn-xml { flex: 1; background: #333; color: white; padding: 10px; text-align: center; border-radius: 5px; cursor: pointer; border: none; font-size: 12px; }
