@@ -1,31 +1,103 @@
-body { 
-    background: #0d0d0d; color: #f2f2f2; 
-    font-family: sans-serif; padding: 15px; 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, where, getDocs, updateDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAZf_RpFnTCS3DxqKIxpK7CEh5aTrLMEs4",
+    authDomain: "boteco934-afc3f.firebaseapp.com",
+    projectId: "boteco934-afc3f",
+    storageBucket: "boteco934-afc3f.appspot.com",
+    messagingSenderId: "182023728304",
+    appId: "1:182023728304:web:e716c52a0d91b192727ae6"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+let carrinho = [];
+
+// ENVIAR RECIBO WHATSAPP
+function enviarRecibo(cliente, itens, total, tipo) {
+    let msg = `*Boteco 934 - Recibo*%0ACliente: ${cliente}%0A------------------%0A`;
+    itens.forEach(i => msg += `${i.qtd}x ${i.nome} - R$ ${i.subtotal.toFixed(2)}%0A`);
+    msg += `------------------%0A*Total: R$ ${total.toFixed(2)}*%0AForma: ${tipo}%0A%0A🍻 Volte sempre!`;
+    window.open(`https://wa.me/?text=${msg}`, '_blank');
 }
-.container { max-width: 500px; margin: auto; }
-header { display: flex; justify-content: space-between; border-bottom: 1px solid #1fcc7d; padding-bottom: 10px; }
-h1 { font-size: 18px; color: #1fcc7d; }
-.total-topo { font-size: 18px; color: #1fcc7d; font-weight: bold; }
 
-input, select, button { 
-    width: 100%; padding: 12px; margin-bottom: 10px; 
-    border-radius: 8px; border: 1px solid #333; 
-    background: #262626; color: #fff; font-size: 15px; 
+// BIPAR
+document.getElementById('biparVenda').addEventListener('change', async (e) => {
+    const code = e.target.value.trim();
+    if (!code) return;
+    const q = query(collection(db, "estoque"), where("codigo", "==", code));
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+        const docRef = snap.docs[0];
+        const p = docRef.data();
+        const ex = carrinho.find(i => i.codigo === code);
+        if (ex) { ex.qtd += 1; ex.subtotal = ex.qtd * p.precoVenda; }
+        else { carrinho.push({ nome: p.nome, preco: p.precoVenda, codigo: code, qtd: 1, subtotal: p.precoVenda, idBanco: docRef.id }); }
+        renderizarCarrinho();
+    }
+    e.target.value = ""; e.target.focus();
+});
+
+function renderizarCarrinho() {
+    document.getElementById('lista-carrinho').innerHTML = carrinho.map(i => `<div class="item-carrinho"><span>${i.qtd}x ${i.nome}</span><span>R$ ${i.subtotal.toFixed(2)}</span></div>`).join('');
+    document.getElementById('total-venda-valor').innerText = `R$ ${carrinho.reduce((a, b) => a + b.subtotal, 0).toFixed(2)}`;
 }
-#biparVenda { border: 1px solid #1fcc7d; font-weight: bold; }
-button { background: #1fcc7d; color: #000; font-weight: bold; cursor: pointer; border: none; }
 
-.item-carrinho { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #222; font-size: 14px; }
+// FINALIZAR
+window.finalizarVenda = async () => {
+    const cliente = document.getElementById('identificacaoCliente').value.toUpperCase();
+    const pag = document.getElementById('metodoPagamento').value;
+    const total = carrinho.reduce((a, b) => a + b.subtotal, 0);
+    if (!cliente || total === 0) return alert("Falta dados!");
 
-.caixa-relatorio { background: #141414; padding: 15px; border-radius: 10px; margin-top: 20px; }
-h3 { font-size: 15px; color: #1fcc7d; margin-bottom: 10px; }
+    try {
+        for (const item of carrinho) {
+            const ref = doc(db, "estoque", item.idBanco);
+            const s = await getDoc(ref);
+            if (s.exists()) await updateDoc(ref, { estoqueAtual: s.data().estoqueAtual - item.qtd });
+        }
+        await addDoc(collection(db, "vendas"), { cliente, pagamento: pag, total, itens: carrinho, data: new Date() });
+        if (confirm("Venda salva! Gerar recibo no WhatsApp?")) enviarRecibo(cliente, carrinho, total, pag);
+        carrinho = []; renderizarCarrinho(); document.getElementById('identificacaoCliente').value = "";
+    } catch (e) { alert("Erro: " + e.message); }
+};
 
-.cards-financeiro { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.mini-card { background: #1e1e1e; padding: 10px; border-radius: 8px; font-size: 13px; color: #aaa; }
-.mini-card span { display: block; font-size: 15px; color: #fff; font-weight: bold; }
-.mini-card.pendura span { color: #ff5e5e; }
+// RELATÓRIOS E INVENTÁRIO
+onSnapshot(collection(db, "vendas"), (s) => {
+    let t = { Pix: 0, Dinheiro: 0, Cartão: 0, Pendura: 0 };
+    const lp = document.getElementById('lista-penduras');
+    lp.innerHTML = "";
+    s.forEach(d => {
+        const v = d.data();
+        if (t[v.pagamento] !== undefined) t[v.pagamento] += v.total;
+        if (v.pagamento === "Pendura") lp.innerHTML += `<li>${v.cliente}: R$ ${v.total.toFixed(2)}</li>`;
+    });
+    document.getElementById('faturamento-pix').innerText = `R$ ${t.Pix.toFixed(2)}`;
+    document.getElementById('faturamento-dinheiro').innerText = `R$ ${t.Dinheiro.toFixed(2)}`;
+    document.getElementById('faturamento-cartao').innerText = `R$ ${t.Cartão.toFixed(2)}`;
+    document.getElementById('faturamento-pendura').innerText = `R$ ${t.Pendura.toFixed(2)}`;
+});
 
-.grid-estoque { display: grid; gap: 10px; margin-top: 10px; }
-.card-estoque { background: #1a1a1a; padding: 10px; border-radius: 8px; border: 1px solid #333; }
-.barra-fora { width: 100%; height: 6px; background: #333; border-radius: 5px; margin-top: 5px; overflow: hidden; }
-.barra-dentro { height: 100%; transition: 0.5s; }
+onSnapshot(collection(db, "estoque"), (s) => {
+    const g = document.getElementById('grid-estoque');
+    g.innerHTML = "";
+    s.forEach(d => {
+        const p = d.data();
+        const porc = (p.estoqueAtual / p.rendimento) * 100;
+        g.innerHTML += `<div class="card-estoque">
+            <div style="display:flex; justify-content:space-between; font-size:13px;"><span>${p.nome}</span><span>${p.estoqueAtual} doses</span></div>
+            <div class="barra-fora"><div class="barra-dentro" style="width:${porc}%; background:${porc < 20 ? '#ff5e5e' : '#1fcc7d'}"></div></div>
+        </div>`;
+    });
+});
+
+window.salvarProduto = async () => {
+    const nome = document.getElementById('nomeProduto').value.toUpperCase();
+    const preco = parseFloat(document.getElementById('precoProduto').value);
+    const custo = parseFloat(document.getElementById('custoProduto').value);
+    const rend = parseInt(document.getElementById('qtdDoses').value) || 1;
+    const cod = document.getElementById('codigoBarra').value.trim();
+    await addDoc(collection(db, "estoque"), { nome, precoVenda: preco, custoGarrafa: custo, rendimento: rend, estoqueAtual: rend, codigo: cod, data: new Date() });
+    alert("Cadastrado!");
+};
