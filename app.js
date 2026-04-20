@@ -14,23 +14,55 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 let carrinho = [];
 
-// --- FUNÇÃO PARA RECEBER PENDURA ---
-window.receberPagamento = async (vendaId, nomeCliente) => {
-    const novoMetodo = prompt(`Como o(a) ${nomeCliente} pagou? (Pix, Dinheiro ou Cartão)` );
-    if (!novoMetodo || !["Pix", "Dinheiro", "Cartão"].includes(novoMetodo)) {
-        return alert("Pagamento cancelado ou método inválido!");
-    }
+// --- FUNÇÃO PARA GERAR MENSAGEM WHATSAPP ---
+function enviarWhatsApp(cliente, itens, total, tipo) {
+    let mensagem = `*Boteco 934 - Recibo*%0A`;
+    mensagem += `Cliente: ${cliente}%0A`;
+    mensagem += `--------------------------%0A`;
+    
+    itens.forEach(item => {
+        mensagem += `${item.qtd}x ${item.nome} - R$ ${item.subtotal.toFixed(2)}%0A`;
+    });
+
+    mensagem += `--------------------------%0A`;
+    mensagem += `*Total: R$ ${total.toFixed(2)}*%0A`;
+    mensagem += `Pagamento: ${tipo}%0A`;
+    mensagem += `%0AObrigado pela preferência! 🍻`;
+
+    window.open(`https://wa.me/?text=${mensagem}`, '_blank');
+}
+
+// --- FINALIZAR VENDA E ENVIAR ---
+window.finalizarVenda = async () => {
+    const cliente = document.getElementById('identificacaoCliente').value;
+    const pagamento = document.getElementById('metodoPagamento').value;
+    const total = carrinho.reduce((acc, i) => acc + i.subtotal, 0);
+
+    if (!cliente || total === 0) return alert("Falta o Cliente ou Itens!");
 
     try {
-        const vendaRef = doc(db, "vendas", vendaId);
-        await updateDoc(vendaRef, { pagamento: novoMetodo });
-        alert(`Pagamento de ${nomeCliente} recebido via ${novoMetodo}! ✅`);
-    } catch (e) {
-        alert("Erro ao processar: " + e.message);
-    }
+        const dadosVenda = {
+            cliente: cliente.toUpperCase(),
+            pagamento,
+            total,
+            itens: carrinho,
+            data: new Date()
+        };
+
+        await addDoc(collection(db, "vendas"), dadosVenda);
+        
+        // Pergunta se quer enviar o comprovante
+        if (confirm("Venda salva! Deseja enviar o comprovante por WhatsApp?")) {
+            enviarWhatsApp(dadosVenda.cliente, dadosVenda.itens, dadosVenda.total, dadosVenda.pagamento);
+        }
+
+        carrinho = [];
+        renderizarCarrinho();
+        document.getElementById('identificacaoCliente').value = "";
+    } catch (e) { alert("Erro ao fechar venda: " + e.message); }
 };
 
-// --- MANTENDO O PDV E CADASTRO ---
+// --- O RESTANTE DO CÓDIGO (BIPAR E RELATÓRIOS) SEGUE IGUAL ---
 document.getElementById('biparVenda').addEventListener('change', async (e) => {
     const code = e.target.value.trim();
     if (!code) return;
@@ -57,33 +89,17 @@ function renderizarCarrinho() {
     totalElt.innerText = `R$ ${carrinho.reduce((acc, i) => acc + i.subtotal, 0).toFixed(2)}`;
 }
 
-window.finalizarVenda = async () => {
-    const cliente = document.getElementById('identificacaoCliente').value;
-    const pagamento = document.getElementById('metodoPagamento').value;
-    const total = carrinho.reduce((acc, i) => acc + i.subtotal, 0);
-    if (!cliente || total === 0) return alert("Falta Cliente/Itens!");
-    await addDoc(collection(db, "vendas"), { cliente: cliente.toUpperCase(), pagamento, total, data: new Date() });
-    carrinho = []; renderizarCarrinho(); document.getElementById('identificacaoCliente').value = "";
-};
-
-// --- ATUALIZAÇÃO DO RELATÓRIO E LISTA COM BOTÃO RECEBER ---
 onSnapshot(collection(db, "vendas"), (snap) => {
     let totais = { Pix: 0, Dinheiro: 0, Cartão: 0, Pendura: 0 };
     const listaPenduras = document.getElementById('lista-penduras');
     listaPenduras.innerHTML = "";
-
     snap.forEach(vDoc => {
         const v = vDoc.data();
         if (totais[v.pagamento] !== undefined) totais[v.pagamento] += v.total;
         if (v.pagamento === "Pendura") {
-            listaPenduras.innerHTML += `
-                <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-                    <span>${v.cliente}: R$ ${v.total.toFixed(2)}</span>
-                    <button onclick="receberPagamento('${vDoc.id}', '${v.cliente}')" style="background:#3498db; padding:4px 8px; font-size:12px;">RECEBER</button>
-                </li>`;
+            listaPenduras.innerHTML += `<li>${v.cliente}: R$ ${v.total.toFixed(2)}</li>`;
         }
     });
-
     document.getElementById('faturamento-pix').innerText = `R$ ${totais.Pix.toFixed(2)}`;
     document.getElementById('faturamento-dinheiro').innerText = `R$ ${totais.Dinheiro.toFixed(2)}`;
     document.getElementById('faturamento-cartao').innerText = `R$ ${totais.Cartão.toFixed(2)}`;
