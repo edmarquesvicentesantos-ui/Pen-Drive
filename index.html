@@ -3,51 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boteco 934 | PDV & Mesas</title>
+    <title>Boteco 934 | PDV</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Boteco 934</h1>
-            <div class="caixa-info">
-                <span>Caixa: <strong id="total-caixa-dia">R$ 0,00</strong></span>
-            </div>
+            <div class="total-topo">Total: <span id="total-venda-valor">R$ 0,00</span></div>
         </header>
 
-        <div id="painel-mesas" class="mesa-grid">
-            </div>
-
         <section class="caixa-venda">
-            <div class="linha">
-                <input type="text" id="biparVenda" placeholder="Bipar para Mesa/Cliente" autofocus>
-            </div>
-            <div id="lista-carrinho" class="carrinho-scroll"></div>
-            <div class="linha">
-                <input type="text" id="identificacaoCliente" placeholder="Mesa ou Nome Cliente">
+            <input type="text" id="biparVenda" placeholder="BIPAR PRODUTO" autofocus>
+            
+            <div id="lista-carrinho">
+                </div>
+
+            <div class="controles-venda">
+                <input type="text" id="identificacaoCliente" placeholder="Mesa ou Nome">
                 <select id="metodoPagamento">
                     <option value="Pix">Pix</option>
                     <option value="Dinheiro">Dinheiro</option>
                     <option value="Cartão">Cartão</option>
                     <option value="Pendura">Pendura</option>
                 </select>
-                <button onclick="finalizarVenda()" id="btn-finalizar">FECHAR CONTA</button>
+                <button onclick="finalizarVenda()">FINALIZAR</button>
             </div>
         </section>
 
         <details>
-            <summary>📦 Estoque / Cadastro</summary>
-            <section class="caixa-cadastro">
-                <div class="linha">
-                    <input type="text" id="codigoBarra" placeholder="Código">
-                    <input type="text" id="nomeProduto" placeholder="Nome">
-                </div>
-                <div class="linha">
-                    <input type="number" id="custoProduto" placeholder="Custo">
-                    <input type="number" id="precoProduto" placeholder="Venda">
-                    <button onclick="salvarProduto()">+</button>
-                </div>
-            </section>
+            <summary>📦 Cadastrar no Estoque</summary>
+            <div class="caixa-cadastro">
+                <input type="text" id="codigoBarra" placeholder="Cód. Barra">
+                <input type="text" id="nomeProduto" placeholder="Nome">
+                <input type="number" id="custoProduto" placeholder="Custo">
+                <input type="number" id="precoProduto" placeholder="Venda">
+                <button onclick="salvarProduto()">OK</button>
+            </div>
         </details>
     </div>
     <script type="module" src="app.js"></script>
