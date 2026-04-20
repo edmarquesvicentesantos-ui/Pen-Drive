@@ -3,20 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boteco 934 | PDV</title>
-    <link rel="stylesheet" href="estilo.css?v=1.1">
+    <title>Boteco 934 | PDV Pro</title>
+    <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Boteco 934</h1>
-            <span class="status">Online 🟢</span>
+            <span id="status-busca">Aguardando Bip...</span>
         </header>
 
         <section class="caixa-cadastro">
             <div class="linha">
                 <input type="text" id="codigoBarra" placeholder="Bipar Código" autofocus>
-                <input type="text" id="nomeProduto" placeholder="Nome do Produto">
+                <input type="text" id="nomeProduto" placeholder="Nome do Produto (Busca Automática)">
+            </div>
+            <div class="linha">
+                <select id="categoriaProduto">
+                    <option value="Bebidas">Bebidas</option>
+                    <option value="Petiscos">Petiscos</option>
+                    <option value="Boticário">Boticário</option>
+                    <option value="Outros">Outros</option>
+                </select>
+                <input type="text" id="fotoProduto" placeholder="Link da Foto (Opcional)">
             </div>
             <div class="linha">
                 <input type="number" id="custoProduto" placeholder="Custo R$">
@@ -25,9 +34,8 @@
             </div>
         </section>
 
-        <h3>Seu Estoque</h3>
         <div id="grid-produtos" class="grid"></div>
     </div>
-    <script type="module" src="app.js?v=1.1"></script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>
