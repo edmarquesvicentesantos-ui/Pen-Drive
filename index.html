@@ -44,7 +44,16 @@
             <h3>🥃 Inventário de Doses e Estoque</h3>
             <div id="grid-estoque" class="grid-estoque"></div>
         </section>
-
+<section class="caixa-relatorio">
+    <h3>📥 Importar e Exportar Dados</h3>
+    <div style="display: flex; gap: 10px;">
+        <button onclick="exportarProdutos()" style="background: #3498db;">BAIXAR LISTA (EXPORTAR)</button>
+        <label class="btn-importar">
+            CARREGAR XML / LISTA
+            <input type="file" id="importarArquivo" style="display:none" onchange="importarProdutos(this)">
+        </label>
+    </div>
+</section>
         <details>
             <summary>📦 Cadastrar Produto/Destilado</summary>
             <div class="caixa-cadastro">
