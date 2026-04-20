@@ -1,13 +1,14 @@
-* { box-sizing: border-box; font-family: sans-serif; }
-body { background-color: #0d0d0d; color: #fff; margin: 0; padding: 15px; }
-.container { max-width: 600px; margin: auto; }
-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; color: #2ecc71; }
-.painel-cadastro { background: #1a1a1a; padding: 15px; border-radius: 12px; margin-bottom: 20px; }
-.inputs { display: flex; flex-direction: column; gap: 10px; }
-input { background: #262626; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; font-size: 1rem; }
-button { background: #2ecc71; border: none; color: #fff; padding: 15px; border-radius: 8px; cursor: pointer; font-size: 1.2rem; }
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.card { background: #1a1a1a; border-radius: 10px; padding: 15px; border-bottom: 4px solid #2ecc71; position: relative; }
-.card h4 { margin: 0; font-size: 0.9rem; text-transform: uppercase; }
-.card .preco { color: #2ecc71; font-weight: bold; font-size: 1.2rem; display: block; margin: 5px 0; }
-.card .cod { font-size: 0.7rem; color: #777; display: block; }
+body { background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; padding: 20px; margin: 0; }
+.container { max-width: 500px; margin: auto; }
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #2ecc71; padding-bottom: 10px; }
+h1 { color: #2ecc71; margin: 0; font-size: 24px; }
+.caixa-cadastro { background: #1a1a1a; padding: 20px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+.linha { display: flex; gap: 10px; margin-bottom: 10px; }
+input { background: #333; border: 1px solid #444; color: #fff; padding: 12px; border-radius: 8px; width: 100%; outline: none; }
+input:focus { border-color: #2ecc71; }
+button { background: #2ecc71; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 20px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.card { background: #1a1a1a; padding: 15px; border-radius: 12px; border-bottom: 4px solid #2ecc71; text-align: center; }
+.card h4 { margin: 0; font-size: 14px; color: #aaa; text-transform: uppercase; }
+.card .preco { display: block; font-size: 20px; font-weight: bold; color: #2ecc71; margin-top: 5px; }
+.card .barcode { font-size: 10px; color: #555; display: block; }
