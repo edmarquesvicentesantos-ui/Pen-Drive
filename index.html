@@ -4,31 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Boteco 934 | PDV</title>
-    <link rel="stylesheet" href="estilo.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./estilo.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-barcode"></i> Boteco 934</h1>
-            <div id="status" class="status">Conectado 🟢</div>
+            <h1>Boteco 934</h1>
+            <span class="status">Online 🟢</span>
         </header>
 
-        <section class="painel-cadastro">
-            <div class="inputs">
+        <section class="caixa-cadastro">
+            <div class="linha">
                 <input type="text" id="codigoBarra" placeholder="Bipar Código" autofocus>
                 <input type="text" id="nomeProduto" placeholder="Nome do Produto">
+            </div>
+            <div class="linha">
                 <input type="number" id="custoProduto" placeholder="Custo R$">
                 <input type="number" id="precoProduto" placeholder="Venda R$">
-                <button onclick="salvarProduto()"><i class="fas fa-save"></i></button>
+                <button onclick="salvarProduto()">+</button>
             </div>
         </section>
 
-        <section class="vitrine">
-            <h3>Seu Estoque</h3>
-            <div id="grid-produtos" class="grid"></div>
-        </section>
+        <h3>Seu Estoque</h3>
+        <div id="grid-produtos" class="grid"></div>
     </div>
-    <script type="module" src="app.js"></script>
+    <script type="module" src="./app.js"></script>
 </body>
 </html>
