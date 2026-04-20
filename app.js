@@ -14,11 +14,11 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 let carrinho = [];
 
-// Seleção de Pagamento
-window.definirPag = (metodo) => {
+// Funções de Interface
+window.selecionarPg = (metodo, btn) => {
     document.getElementById('metodoPagamento').value = metodo;
-    document.querySelectorAll('.btn-pag').forEach(b => b.classList.remove('ativo'));
-    event.target.classList.add('ativo');
+    document.querySelectorAll('.btn-pg').forEach(b => b.classList.remove('ativo'));
+    btn.classList.add('ativo');
 };
 
 // Bipar Produto
@@ -41,18 +41,18 @@ document.getElementById('biparVenda').addEventListener('change', async (e) => {
             carrinho.push({ nome: p.nome, preco: p.precoVenda, codigo: code, qtd: 1, subtotal: p.precoVenda, idBanco: d.id });
         }
         renderizar();
-    } else { alert("Produto não encontrado!"); }
+    }
     e.target.value = ""; e.target.focus();
 });
 
 function renderizar() {
     const corpo = document.getElementById('corpo-carrinho');
-    corpo.innerHTML = carrinho.map(i => `
+    corpo.innerHTML = carrinho.map((i, index) => `
         <tr>
-            <td>${i.qtd}x</td>
-            <td style="font-weight: bold;">${i.nome}</td>
-            <td>R$ ${i.preco.toFixed(2)}</td>
-            <td style="text-align: right;">R$ ${i.subtotal.toFixed(2)}</td>
+            <td>${index + 1} - ${i.nome}</td>
+            <td>${i.qtd}</td>
+            <td>${i.preco.toFixed(2)}</td>
+            <td style="text-align:right">${i.subtotal.toFixed(2)}</td>
         </tr>
     `).join('');
     document.getElementById('total-venda-valor').innerText = carrinho.reduce((a, b) => a + b.subtotal, 0).toFixed(2);
@@ -73,15 +73,22 @@ window.finalizarVenda = async () => {
     
     await addDoc(collection(db, "vendas"), { cliente, pagamento: pag, total, itens: carrinho, data: new Date() });
     
-    alert(`VENDA CONCLUÍDA!\nCliente: ${cliente}\nTotal: R$ ${total.toFixed(2)}`);
+    alert(`VENDA CONCLUÍDA!\nVALOR: R$ ${total.toFixed(2)}`);
     carrinho = []; renderizar();
     document.getElementById('identificacaoCliente').value = "";
 };
 
-// Monitor Financeiro
+// Resumo do Caixa
 onSnapshot(collection(db, "vendas"), (s) => {
     let t = { Pix: 0, Dinheiro: 0 };
     s.forEach(d => { if (t[d.data().pagamento] !== undefined) t[d.data().pagamento] += d.data().total; });
     document.getElementById('faturamento-pix').innerText = t.Pix.toFixed(2);
     document.getElementById('faturamento-dinheiro').innerText = t.Dinheiro.toFixed(2);
 });
+
+window.exportarEstoque = async () => {
+    const snap = await getDocs(collection(db, "estoque"));
+    const dados = []; snap.forEach(d => dados.push(d.data()));
+    const blob = new Blob([JSON.stringify(dados, null, 2)], {type: "application/json"});
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = 'estoque_boteco934.json'; a.click();
+};
