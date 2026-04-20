@@ -19,7 +19,7 @@ window.salvarProduto = async () => {
     const custo = document.getElementById('custoProduto').value;
     const preco = document.getElementById('precoProduto').value;
 
-    if (!nome || !preco) return alert("Por favor, preencha Nome e Preço!");
+    if (!nome || !preco) return alert("Preencha Nome e Preço!");
 
     try {
         await addDoc(collection(db, "estoque"), {
@@ -30,15 +30,10 @@ window.salvarProduto = async () => {
             data: new Date()
         });
         
-        // Limpa campos e volta o foco para o leitor
-        document.getElementById('codigoBarra').value = "";
-        document.getElementById('nomeProduto').value = "";
-        document.getElementById('custoProduto').value = "";
-        document.getElementById('precoProduto').value = "";
+        document.querySelectorAll('input').forEach(i => i.value = "");
         document.getElementById('codigoBarra').focus();
-        
     } catch (e) {
-        alert("Erro ao salvar no Firebase: " + e);
+        alert("Erro: " + e);
     }
 };
 
