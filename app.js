@@ -8,97 +8,57 @@ const firebaseConfig = {
     storageBucket: "boteco934-afc3f.appspot.com",
     messagingSenderId: "182023728304",
     appId: "1:182023728304:web:e716c52a0d91b192727ae6"
-};// Função para os botões de atalho (adiciona sem precisar bipar)
-window.adicionarPorNome = async (nomeProduto) => {
-    const q = query(collection(db, "estoque"), where("nome", "==", nomeProduto));
-    const snap = await getDocs(q);
-    
-    if (!snap.empty) {
-        const d = snap.docs[0];
-        const p = d.data();
-        const ex = carrinho.find(i => i.nome === nomeProduto);
-        
-        if (ex) {
-            ex.qtd++;
-            ex.subtotal = ex.qtd * p.precoVenda;
-        } else {
-            carrinho.push({ nome: p.nome, preco: p.precoVenda, codigo: p.codigo, qtd: 1, subtotal: p.precoVenda, idBanco: d.id });
-        }
-        renderizar();
-    }
 };
-
-// Monitor de Penduras (mostra quem deve no painel lateral)
-onSnapshot(collection(db, "vendas"), (s) => {
-    const penduras = {};
-    s.forEach(d => {
-        const v = d.data();
-        if (v.pagamento === "Pendura") {
-            penduras[v.cliente] = (penduras[v.cliente] || 0) + v.total;
-        }
-    });
-
-    const lista = document.getElementById('lista-penduras');
-    lista.innerHTML = Object.entries(penduras).map(([nome, total]) => `
-        <div class="item-pendura">
-            ${nome} <span>R$ ${total.toFixed(2)}</span>
-        </div>
-    `).join('');
-});
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 let carrinho = [];
 
-// Funções de Interface
-window.selecionarPg = (metodo, btn) => {
-    document.getElementById('metodoPagamento').value = metodo;
-    document.querySelectorAll('.btn-pg').forEach(b => b.classList.remove('ativo'));
-    btn.classList.add('ativo');
-};
-
-// Bipar Produto
-document.getElementById('biparVenda').addEventListener('change', async (e) => {
-    const code = e.target.value.trim();
-    if (!code) return;
-
-    const q = query(collection(db, "estoque"), where("codigo", "==", code));
+// ADICIONAR PRODUTO (BIP OU ATALHO)
+async function buscarEAdicionar(codigoOuNome, eNome = false) {
+    const q = eNome ? 
+        query(collection(db, "estoque"), where("nome", "==", codigoOuNome)) :
+        query(collection(db, "estoque"), where("codigo", "==", codigoOuNome));
+    
     const snap = await getDocs(q);
-
     if (!snap.empty) {
         const d = snap.docs[0];
         const p = d.data();
-        const ex = carrinho.find(i => i.codigo === code);
-        
+        const ex = carrinho.find(i => i.idBanco === d.id);
         if (ex) {
             ex.qtd++;
             ex.subtotal = ex.qtd * p.precoVenda;
         } else {
-            carrinho.push({ nome: p.nome, preco: p.precoVenda, codigo: code, qtd: 1, subtotal: p.precoVenda, idBanco: d.id });
+            carrinho.push({ nome: p.nome, preco: p.precoVenda, qtd: 1, subtotal: p.precoVenda, idBanco: d.id });
         }
         renderizar();
     }
+}
+
+document.getElementById('biparVenda').addEventListener('change', (e) => {
+    buscarEAdicionar(e.target.value.trim());
     e.target.value = ""; e.target.focus();
 });
 
+window.adicionarPorNome = (nome) => buscarEAdicionar(nome, true);
+
 function renderizar() {
     const corpo = document.getElementById('corpo-carrinho');
-    corpo.innerHTML = carrinho.map((i, index) => `
+    corpo.innerHTML = carrinho.map(i => `
         <tr>
-            <td>${index + 1} - ${i.nome}</td>
-            <td>${i.qtd}</td>
-            <td>${i.preco.toFixed(2)}</td>
-            <td style="text-align:right">${i.subtotal.toFixed(2)}</td>
+            <td>${i.nome}</td>
+            <td>${i.qtd}x</td>
+            <td style="text-align:right">R$ ${i.subtotal.toFixed(2)}</td>
         </tr>
     `).join('');
     document.getElementById('total-venda-valor').innerText = carrinho.reduce((a, b) => a + b.subtotal, 0).toFixed(2);
 }
 
+// FINALIZAR VENDA
 window.finalizarVenda = async () => {
     const total = carrinho.reduce((a, b) => a + b.subtotal, 0);
     const cliente = document.getElementById('identificacaoCliente').value.toUpperCase() || "CONSUMIDOR";
     const pag = document.getElementById('metodoPagamento').value;
-    
     if (total === 0) return;
 
     for (const item of carrinho) {
@@ -107,24 +67,31 @@ window.finalizarVenda = async () => {
         if (s.exists()) await updateDoc(ref, { estoqueAtual: s.data().estoqueAtual - item.qtd });
     }
     
-    await addDoc(collection(db, "vendas"), { cliente, pagamento: pag, total, itens: carrinho, data: new Date() });
-    
-    alert(`VENDA CONCLUÍDA!\nVALOR: R$ ${total.toFixed(2)}`);
+    await addDoc(collection(db, "vendas"), { cliente, pagamento: pag, total, data: new Date() });
+    alert("Venda Finalizada!");
     carrinho = []; renderizar();
     document.getElementById('identificacaoCliente').value = "";
 };
 
-// Resumo do Caixa
-onSnapshot(collection(db, "vendas"), (s) => {
-    let t = { Pix: 0, Dinheiro: 0 };
-    s.forEach(d => { if (t[d.data().pagamento] !== undefined) t[d.data().pagamento] += d.data().total; });
-    document.getElementById('faturamento-pix').innerText = t.Pix.toFixed(2);
-    document.getElementById('faturamento-dinheiro').innerText = t.Dinheiro.toFixed(2);
-});
+// GESTÃO DE PRODUTOS
+window.abrirModal = () => document.getElementById('modalCadastro').style.display = 'flex';
+window.fecharModal = () => document.getElementById('modalCadastro').style.display = 'none';
 
-window.exportarEstoque = async () => {
-    const snap = await getDocs(collection(db, "estoque"));
-    const dados = []; snap.forEach(d => dados.push(d.data()));
-    const blob = new Blob([JSON.stringify(dados, null, 2)], {type: "application/json"});
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = 'estoque_boteco934.json'; a.click();
+window.salvarNovoProduto = async () => {
+    const codigo = document.getElementById('cadCodigo').value;
+    const nome = document.getElementById('cadNome').value.toUpperCase();
+    const preco = parseFloat(document.getElementById('cadPreco').value);
+    const estoque = parseInt(document.getElementById('cadEstoque').value);
+
+    await addDoc(collection(db, "estoque"), { codigo, nome, precoVenda: preco, estoqueAtual: estoque });
+    alert("Salvo!"); fecharModal();
 };
+
+// MONITOR DE PENDURAS
+onSnapshot(collection(db, "vendas"), (s) => {
+    const p = {};
+    s.forEach(d => { if (d.data().pagamento === "Pendura") p[d.data().cliente] = (p[d.data().cliente] || 0) + d.data().total; });
+    document.getElementById('lista-penduras').innerHTML = Object.entries(p).map(([n, t]) => `
+        <div class="item-pendura">${n} <span>R$ ${t.toFixed(2)}</span></div>
+    `).join('');
+});
