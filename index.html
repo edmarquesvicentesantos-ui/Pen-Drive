@@ -2,63 +2,68 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Boteco 934 | PDV Profissional</title>
+    <title>Boteco 934 | Checkout Supermercado</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
-    <div class="pdv-container">
-        <section class="venda-ativa">
-            <div class="topo-venda">
+    <div class="monitor-caixa">
+        <main class="coluna-cupom">
+            <div class="cabecalho-loja">
                 <h1>BOTECO 934</h1>
-                <div class="display-total">TOTAL R$ <span id="total-venda-valor">0,00</span></div>
+                <p>Petrolina - PE</p>
             </div>
             
-            <div class="input-container">
-                <input type="text" id="biparVenda" placeholder="BIPE O CÓDIGO OU DIGITE..." autofocus>
-            </div>
-
-            <div class="tabela-container">
-                <table id="tabela-pdv">
+            <div class="area-lista">
+                <table id="cupom-itens">
                     <thead>
                         <tr>
+                            <th>ITEM</th>
                             <th>QTD</th>
-                            <th>PRODUTO</th>
-                            <th>UNIT.</th>
-                            <th style="text-align:right">SUBTOTAL</th>
+                            <th>VL.UNIT</th>
+                            <th>TOTAL</th>
                         </tr>
                     </thead>
                     <tbody id="corpo-carrinho">
                         </tbody>
                 </table>
             </div>
-        </section>
 
-        <aside class="controles-pdv">
-            <div class="card-pagamento">
-                <label>NOME DO CLIENTE / MESA</label>
-                <input type="text" id="identificacaoCliente" placeholder="Ex: MESA 05">
+            <div class="totalizador">
+                <div class="label-total">TOTAL A PAGAR</div>
+                <div class="valor-total">R$ <span id="total-venda-valor">0,00</span></div>
+            </div>
+        </main>
+
+        <aside class="coluna-comandos">
+            <div class="campo-bip">
+                <label>CÓDIGO DE BARRAS</label>
+                <input type="text" id="biparVenda" placeholder="BIPE AQUI..." autofocus>
+            </div>
+
+            <div class="caixa-fechamento">
+                <label>CLIENTE/MESA</label>
+                <input type="text" id="identificacaoCliente" placeholder="IDENTIFIQUE">
                 
-                <label>FORMA DE PAGAMENTO</label>
-                <div class="botoes-pagamento">
-                    <button class="btn-pag" onclick="definirPag('Pix')">PIX</button>
-                    <button class="btn-pag" onclick="definirPag('Dinheiro')">DINHEIRO</button>
-                    <button class="btn-pag" onclick="definirPag('Cartão')">CARTÃO</button>
-                    <button class="btn-pag btn-pendura" onclick="definirPag('Pendura')">PENDURA</button>
+                <label>PAGAMENTO</label>
+                <div class="botoes-grade">
+                    <button class="btn-pg ativo" onclick="selecionarPg('Pix', this)">PIX</button>
+                    <button class="btn-pg" onclick="selecionarPg('Dinheiro', this)">DINHEIRO</button>
+                    <button class="btn-pg" onclick="selecionarPg('Cartão', this)">CARTÃO</button>
+                    <button class="btn-pg btn-vermelho" onclick="selecionarPg('Pendura', this)">PENDURA</button>
                 </div>
                 <input type="hidden" id="metodoPagamento" value="Pix">
             </div>
 
-            <button class="btn-finalizar" onclick="finalizarVenda()">FINALIZAR VENDA (F10)</button>
+            <button class="btn-finalizar" onclick="finalizarVenda()">FINALIZAR VENDA</button>
 
-            <div class="resumo-caixa">
-                <h3>CAIXA DO DIA</h3>
-                <div class="linha-caixa">Pix: <span id="faturamento-pix">0,00</span></div>
-                <div class="linha-caixa">Dinheiro: <span id="faturamento-dinheiro">0,00</span></div>
+            <div class="faturamento-dia">
+                <div class="fat-item">PIX: <span id="faturamento-pix">0,00</span></div>
+                <div class="fat-item">DIN: <span id="faturamento-dinheiro">0,00</span></div>
             </div>
 
-            <div class="acoes-sistema">
+            <div class="utilitarios">
                 <button onclick="exportarEstoque()">BACKUP</button>
-                <label class="btn-xml">XML <input type="file" id="arquivoImportar" style="display:none"></label>
+                <label class="btn-upload">IMPORTAR <input type="file" id="arquivoImportar" style="display:none"></label>
             </div>
         </aside>
     </div>
