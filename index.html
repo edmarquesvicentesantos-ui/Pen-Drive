@@ -1,111 +1,62 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, query, where, getDocs, updateDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boteco 934 | PDV Completo</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Boteco 934</h1>
+            <div class="total-topo">Total: <span id="total-venda-valor">R$ 0,00</span></div>
+        </header>
 
-const firebaseConfig = {
-    apiKey: "AIzaSyAZf_RpFnTCS3DxqKIxpK7CEh5aTrLMEs4",
-    authDomain: "boteco934-afc3f.firebaseapp.com",
-    projectId: "boteco934-afc3f",
-    storageBucket: "boteco934-afc3f.appspot.com",
-    messagingSenderId: "182023728304",
-    appId: "1:182023728304:web:e716c52a0d91b192727ae6"
-};
+        <section class="caixa-venda">
+            <input type="text" id="biparVenda" placeholder="BIPAR PRODUTO OU DOSE" autofocus>
+            <div id="lista-carrinho"></div>
+            
+            <div class="controles-venda">
+                <input type="text" id="identificacaoCliente" placeholder="Mesa ou Nome do Cliente">
+                <select id="metodoPagamento">
+                    <option value="Pix">Pix</option>
+                    <option value="Dinheiro">Dinheiro</option>
+                    <option value="Cartão">Cartão</option>
+                    <option value="Pendura">Pendura</option>
+                </select>
+                <button onclick="finalizarVenda()">FINALIZAR E RECIBO 🍻</button>
+            </div>
+        </section>
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-let carrinho = [];
+        <section class="caixa-relatorio">
+            <h3>📊 Resumo Financeiro Hoje</h3>
+            <div class="cards-financeiro">
+                <div class="mini-card">Pix: <span id="faturamento-pix">R$ 0,00</span></div>
+                <div class="mini-card">Dinheiro: <span id="faturamento-dinheiro">R$ 0,00</span></div>
+                <div class="mini-card">Cartão: <span id="faturamento-cartao">R$ 0,00</span></div>
+                <div class="mini-card pendura">Penduras: <span id="faturamento-pendura">R$ 0,00</span></div>
+            </div>
 
-// FUNÇÃO WHATSAPP
-function enviarRecibo(cliente, itens, total, tipo) {
-    let msg = `*Boteco 934 - Recibo*%0A*Cliente:* ${cliente}%0A---------------------------%0A`;
-    itens.forEach(i => msg += `${i.qtd}x ${i.nome} - R$ ${i.subtotal.toFixed(2)}%0A`);
-    msg += `---------------------------%0A*Total: R$ ${total.toFixed(2)}*%0APagamento: ${tipo}%0A%0A🍻 *Obrigado pela preferência!*`;
-    window.open(`https://wa.me/?text=${msg}`, '_blank');
-}
+            <h3>📝 Penduras Ativas (Clique para Receber)</h3>
+            <ul id="lista-penduras" class="lista-limpa"></ul>
 
-// BUSCA PRODUTO (BIPAR)
-document.getElementById('biparVenda').addEventListener('change', async (e) => {
-    const code = e.target.value.trim();
-    if (!code) return;
-    const q = query(collection(db, "estoque"), where("codigo", "==", code));
-    const snap = await getDocs(q);
-    if (!snap.empty) {
-        const docRef = snap.docs[0];
-        const p = docRef.data();
-        const ex = carrinho.find(i => i.codigo === code);
-        if (ex) { ex.qtd += 1; ex.subtotal = ex.qtd * p.precoVenda; }
-        else { carrinho.push({ nome: p.nome, preco: p.precoVenda, codigo: code, qtd: 1, subtotal: p.precoVenda, idBanco: docRef.id }); }
-        renderizarCarrinho();
-    } else { alert("Produto não cadastrado!"); }
-    e.target.value = ""; e.target.focus();
-});
+            <h3>🥃 Inventário de Doses e Estoque</h3>
+            <div id="grid-estoque" class="grid-estoque"></div>
+        </section>
 
-function renderizarCarrinho() {
-    document.getElementById('lista-carrinho').innerHTML = carrinho.map(i => `<div class="item-carrinho"><span>${i.qtd}x ${i.nome}</span><span>R$ ${i.subtotal.toFixed(2)}</span></div>`).join('');
-    document.getElementById('total-venda-valor').innerText = `R$ ${carrinho.reduce((a, b) => a + b.subtotal, 0).toFixed(2)}`;
-}
-
-// FINALIZAR VENDA
-window.finalizarVenda = async () => {
-    const cliente = document.getElementById('identificacaoCliente').value.toUpperCase();
-    const pag = document.getElementById('metodoPagamento').value;
-    const total = carrinho.reduce((a, b) => a + b.subtotal, 0);
-    if (!cliente || total === 0) return alert("Erro: Identifique o cliente!");
-
-    try {
-        for (const item of carrinho) {
-            const ref = doc(db, "estoque", item.idBanco);
-            const s = await getDoc(ref);
-            if (s.exists()) await updateDoc(ref, { estoqueAtual: s.data().estoqueAtual - item.qtd });
-        }
-        await addDoc(collection(db, "vendas"), { cliente, pagamento: pag, total, itens: carrinho, data: new Date() });
-        
-        if (confirm("Deseja enviar o comprovante via WhatsApp?")) {
-            enviarRecibo(cliente, carrinho, total, pag);
-        }
-
-        carrinho = []; renderizarCarrinho(); document.getElementById('identificacaoCliente').value = "";
-    } catch (e) { alert("Erro ao salvar: " + e.message); }
-};
-
-// ATUALIZAÇÃO DE RELATÓRIOS (ONSNAPSHOT)
-onSnapshot(collection(db, "vendas"), (s) => {
-    let t = { Pix: 0, Dinheiro: 0, Cartão: 0, Pendura: 0 };
-    const lp = document.getElementById('lista-penduras');
-    lp.innerHTML = "";
-    s.forEach(d => {
-        const v = d.data();
-        if (t[v.pagamento] !== undefined) t[v.pagamento] += v.total;
-        if (v.pagamento === "Pendura") lp.innerHTML += `<li>📍 ${v.cliente}: R$ ${v.total.toFixed(2)}</li>`;
-    });
-    document.getElementById('faturamento-pix').innerText = `R$ ${t.Pix.toFixed(2)}`;
-    document.getElementById('faturamento-dinheiro').innerText = `R$ ${t.Dinheiro.toFixed(2)}`;
-    document.getElementById('faturamento-cartao').innerText = `R$ ${t.Cartão.toFixed(2)}`;
-    document.getElementById('faturamento-pendura').innerText = `R$ ${t.Pendura.toFixed(2)}`;
-});
-
-onSnapshot(collection(db, "estoque"), (s) => {
-    const g = document.getElementById('grid-estoque');
-    g.innerHTML = "";
-    s.forEach(d => {
-        const p = d.data();
-        const porc = (p.estoqueAtual / p.rendimento) * 100;
-        g.innerHTML += `<div class="card-estoque">
-            <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;"><span>${p.nome}</span><span style="color:#aaa;">${p.estoqueAtual} doses</span></div>
-            <div class="barra-fora"><div class="barra-dentro" style="width:${porc}%; background:${porc < 20 ? '#ff5e5e' : '#1fcc7d'}"></div></div>
-        </div>`;
-    });
-});
-
-// CADASTRO
-window.salvarProduto = async () => {
-    const nome = document.getElementById('nomeProduto').value.toUpperCase();
-    const preco = parseFloat(document.getElementById('precoProduto').value);
-    const custo = parseFloat(document.getElementById('custoProduto').value);
-    const rend = parseInt(document.getElementById('qtdDoses').value) || 1;
-    const cod = document.getElementById('codigoBarra').value.trim();
-    if(!nome || !preco || !cod) return alert("Preencha os campos obrigatórios!");
-    
-    await addDoc(collection(db, "estoque"), { nome, precoVenda: preco, custoGarrafa: custo, rendimento: rend, estoqueAtual: rend, codigo: cod, data: new Date() });
-    alert("Produto cadastrado com sucesso!");
-    document.getElementById('codigoBarra').value = ""; document.getElementById('nomeProduto').value = "";
-};
+        <details>
+            <summary>📦 Cadastrar Produto/Destilado</summary>
+            <div class="caixa-cadastro">
+                <input type="text" id="codigoBarra" placeholder="Código de Barras">
+                <input type="text" id="nomeProduto" placeholder="Nome do Produto">
+                <input type="number" id="custoProduto" placeholder="Custo da Garrafa">
+                <input type="number" id="precoProduto" placeholder="Preço da Dose/Unidade">
+                <input type="number" id="qtdDoses" placeholder="Doses por Garrafa (Ex: 15)">
+                <button onclick="salvarProduto()">SALVAR NO ESTOQUE</button>
+            </div>
+        </details>
+    </div>
+    <script type="module" src="app.js"></script>
+</body>
+</html>
