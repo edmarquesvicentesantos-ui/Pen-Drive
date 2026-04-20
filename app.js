@@ -14,7 +14,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 let carrinho = [];
 
-// WHATSAPP
+// --- FUNÇÃO WHATSAPP ---
 function enviarRecibo(cliente, itens, total, tipo) {
     let msg = `*Boteco 934 - Recibo*%0ACliente: ${cliente}%0A------------------%0A`;
     itens.forEach(i => msg += `${i.qtd}x ${i.nome} - R$ ${i.subtotal.toFixed(2)}%0A`);
@@ -22,16 +22,16 @@ function enviarRecibo(cliente, itens, total, tipo) {
     window.open(`https://wa.me/?text=${msg}`, '_blank');
 }
 
-// RECEBER PENDURA
+// --- BAIXAR PENDURA ---
 window.receberPendura = async (id, nome) => {
     const met = prompt(`Como ${nome} pagou? (Pix, Dinheiro ou Cartão)`);
     if (met && ["Pix", "Dinheiro", "Cartão"].includes(met)) {
         await updateDoc(doc(db, "vendas", id), { pagamento: met });
-        alert("Pendura baixada com sucesso!");
+        alert("Pagamento registrado!");
     }
 };
 
-// BIPAR
+// --- BIPAR ---
 document.getElementById('biparVenda').addEventListener('change', async (e) => {
     const code = e.target.value.trim();
     if (!code) return;
@@ -53,12 +53,12 @@ function renderizarCarrinho() {
     document.getElementById('total-venda-valor').innerText = `R$ ${carrinho.reduce((a, b) => a + b.subtotal, 0).toFixed(2)}`;
 }
 
-// FINALIZAR
+// --- FINALIZAR ---
 window.finalizarVenda = async () => {
     const cliente = document.getElementById('identificacaoCliente').value.toUpperCase();
     const pag = document.getElementById('metodoPagamento').value;
     const total = carrinho.reduce((a, b) => a + b.subtotal, 0);
-    if (!cliente || total === 0) return alert("Falta dados!");
+    if (!cliente || total === 0) return alert("Falta o nome ou itens!");
 
     for (const item of carrinho) {
         const ref = doc(db, "estoque", item.idBanco);
@@ -66,11 +66,11 @@ window.finalizarVenda = async () => {
         if (s.exists()) await updateDoc(ref, { estoqueAtual: s.data().estoqueAtual - item.qtd });
     }
     await addDoc(collection(db, "vendas"), { cliente, pagamento: pag, total, itens: carrinho, data: new Date() });
-    if (confirm("Gerar recibo no WhatsApp?")) enviarRecibo(cliente, carrinho, total, pag);
+    if (confirm("Deseja enviar o recibo pelo WhatsApp?")) enviarRecibo(cliente, carrinho, total, pag);
     carrinho = []; renderizarCarrinho(); document.getElementById('identificacaoCliente').value = "";
 };
 
-// RELATÓRIOS E INVENTÁRIO
+// --- ATUALIZAÇÕES AUTOMÁTICAS ---
 onSnapshot(collection(db, "vendas"), (s) => {
     let t = { Pix: 0, Dinheiro: 0, Cartão: 0, Pendura: 0 };
     const lp = document.getElementById('lista-penduras');
@@ -95,8 +95,8 @@ onSnapshot(collection(db, "estoque"), (s) => {
         const p = d.data();
         const porc = (p.estoqueAtual / p.rendimento) * 100;
         g.innerHTML += `<div class="card-estoque">
-            <div style="display:flex; justify-content:space-between; font-size:13px;"><span>${p.nome}</span><span>${p.estoqueAtual} doses</span></div>
-            <div class="barra-fora"><div class="barra-dentro" style="width:${porc}%; background:${porc < 20 ? '#ff5e5e' : '#1fcc7d'}"></div></div>
+            <div style="display:flex; justify-content:space-between; font-size:14px;"><span>${p.nome}</span><span>${p.estoqueAtual} doses</span></div>
+            <div class="barra-fora"><div class="barra-dentro" style="width:${porc}%; background:${porc < 25 ? '#ff5e5e' : '#1fcc7d'}"></div></div>
         </div>`;
     });
 });
