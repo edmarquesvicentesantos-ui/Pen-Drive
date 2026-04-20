@@ -1,19 +1,7 @@
-body { background: #000; color: #fff; font-family: sans-serif; padding: 15px; margin: 0; }
-.container { max-width: 600px; margin: auto; }
-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #2ecc71; padding-bottom: 10px; }
-h1 { color: #2ecc71; margin: 0; font-size: 24px; }
-#status-busca { font-size: 12px; color: #777; }
-.caixa-cadastro { background: #1a1a1a; padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-.linha { display: flex; gap: 8px; margin-bottom: 8px; }
-input, select { background: #333; border: 1px solid #444; color: #fff; padding: 10px; border-radius: 6px; width: 100%; outline: none; }
-input:focus { border-color: #2ecc71; }
-button { background: #2ecc71; color: #fff; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.card { background: #1a1a1a; padding: 10px; border-radius: 10px; border-bottom: 4px solid #2ecc71; text-align: center; position: relative; overflow: hidden; }
-.tag { background: #3498db; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; position: absolute; top: 5px; left: 5px; }
-.img-produto { width: 100%; height: 100px; object-fit: cover; border-radius: 6px; margin-bottom: 8px; background: #222; }
-h4 { margin: 5px 0; font-size: 13px; color: #ddd; text-transform: uppercase; height: 32px; overflow: hidden; }
-.preco-venda { display: block; font-size: 18px; font-weight: bold; color: #2ecc71; }
-.info-lucro { margin-top: 8px; border-top: 1px solid #333; padding-top: 5px; background: rgba(0,0,0,0.3); border-radius: 4px; }
-.lucro-reais { display: block; color: #2ecc71; font-size: 12px; font-weight: bold; }
-.margem-percent { display: block; color: #3498db; font-size: 11px; }
+/* Adicione isso ao seu estilo.css atual */
+.caixa-venda { background: #111; padding: 20px; border-radius: 15px; border: 2px solid #2ecc71; margin-bottom: 20px; }
+#lista-carrinho { background: #222; margin: 10px 0; border-radius: 8px; max-height: 150px; overflow-y: auto; }
+.item-carrinho { padding: 8px; border-bottom: 1px solid #333; font-size: 14px; display: flex; justify-content: space-between; }
+#caixa-resumo { background: #2ecc71; color: #000; padding: 5px 15px; border-radius: 20px; font-weight: bold; }
+#btn-finalizar { background: #2ecc71; color: #000; flex: 1; font-size: 16px; }
+summary { color: #2ecc71; cursor: pointer; margin: 10px 0; font-weight: bold; }
