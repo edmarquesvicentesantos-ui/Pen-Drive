@@ -10,13 +10,14 @@
     <div class="container">
         <header>
             <h1>Boteco 934</h1>
-            <span id="status-busca">Aguardando Bip...</span>
+            <span id="status-busca">Aguardando código...</span>
         </header>
 
         <section class="caixa-cadastro">
             <div class="linha">
                 <input type="text" id="codigoBarra" placeholder="Bipar Código" autofocus>
-                <input type="text" id="nomeProduto" placeholder="Nome do Produto (Busca Automática)">
+                <button onclick="buscarProduto()" style="background: #3498db; width: 50px;"><i class="fas fa-search"></i>🔎</button>
+                <input type="text" id="nomeProduto" placeholder="Nome do Produto">
             </div>
             <div class="linha">
                 <select id="categoriaProduto">
@@ -25,12 +26,12 @@
                     <option value="Boticário">Boticário</option>
                     <option value="Outros">Outros</option>
                 </select>
-                <input type="text" id="fotoProduto" placeholder="Link da Foto (Opcional)">
+                <input type="text" id="fotoProduto" placeholder="Link da Foto (URL)">
             </div>
             <div class="linha">
                 <input type="number" id="custoProduto" placeholder="Custo R$">
                 <input type="number" id="precoProduto" placeholder="Venda R$">
-                <button onclick="salvarProduto()">+</button>
+                <button onclick="salvarProduto()" style="width: 100px;">SALVAR</button>
             </div>
         </section>
 
