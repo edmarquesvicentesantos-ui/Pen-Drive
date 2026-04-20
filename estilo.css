@@ -1,38 +1,31 @@
-/* ESTILO DO INVENTÁRIO */
-.grid-estoque {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
-    margin-top: 10px;
+body { 
+    background: #0d0d0d; color: #f2f2f2; 
+    font-family: sans-serif; padding: 15px; 
 }
+.container { max-width: 500px; margin: auto; }
+header { display: flex; justify-content: space-between; border-bottom: 1px solid #1fcc7d; padding-bottom: 10px; }
+h1 { font-size: 18px; color: #1fcc7d; }
+.total-topo { font-size: 18px; color: #1fcc7d; font-weight: bold; }
 
-.card-estoque {
-    background: #1a1a1a;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #333;
+input, select, button { 
+    width: 100%; padding: 12px; margin-bottom: 10px; 
+    border-radius: 8px; border: 1px solid #333; 
+    background: #262626; color: #fff; font-size: 15px; 
 }
+#biparVenda { border: 1px solid #1fcc7d; font-weight: bold; }
+button { background: #1fcc7d; color: #000; font-weight: bold; cursor: pointer; border: none; }
 
-.info-estoque {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-}
+.item-carrinho { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #222; font-size: 14px; }
 
-.nome-prod { font-size: 14px; font-weight: bold; color: #f2f2f2; }
-.qtd-prod { font-size: 13px; color: #aaa; }
+.caixa-relatorio { background: #141414; padding: 15px; border-radius: 10px; margin-top: 20px; }
+h3 { font-size: 15px; color: #1fcc7d; margin-bottom: 10px; }
 
-/* BARRA DE PROGRESSO (VISUAL DA GARRAFA) */
-.barra-fora {
-    width: 100%;
-    height: 8px;
-    background: #333;
-    border-radius: 10px;
-    overflow: hidden;
-}
+.cards-financeiro { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.mini-card { background: #1e1e1e; padding: 10px; border-radius: 8px; font-size: 13px; color: #aaa; }
+.mini-card span { display: block; font-size: 15px; color: #fff; font-weight: bold; }
+.mini-card.pendura span { color: #ff5e5e; }
 
-.barra-dentro {
-    height: 100%;
-    border-radius: 10px;
-    transition: width 0.5s ease-in-out;
-}
+.grid-estoque { display: grid; gap: 10px; margin-top: 10px; }
+.card-estoque { background: #1a1a1a; padding: 10px; border-radius: 8px; border: 1px solid #333; }
+.barra-fora { width: 100%; height: 6px; background: #333; border-radius: 5px; margin-top: 5px; overflow: hidden; }
+.barra-dentro { height: 100%; transition: 0.5s; }
