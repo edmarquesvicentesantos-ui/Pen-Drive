@@ -2,6 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Boteco 934 | PDV Premium</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
@@ -10,23 +11,20 @@
         <main class="area-cupom">
             <div class="cabecalho-loja">
                 <h1>BOTECO 934</h1>
-                <p style="text-align:center; margin:0; color:#888;">PETROLINA - PE</p>
+                <p>O MELHOR DA REGIÃO - PETROLINA</p>
             </div>
-
             <div class="tabela-venda">
                 <table>
                     <thead>
                         <tr>
-                            <th>ITEM / DESCRIÇÃO</th>
+                            <th>DESCRIÇÃO DO ITEM</th>
                             <th>QTD</th>
                             <th style="text-align:right">TOTAL</th>
                         </tr>
                     </thead>
-                    <tbody id="corpo-carrinho">
-                        </tbody>
+                    <tbody id="corpo-carrinho"></tbody>
                 </table>
             </div>
-
             <div class="painel-total">
                 <div style="font-size: 14px; font-weight: bold;">TOTAL A PAGAR</div>
                 R$ <span id="total-venda-valor">0,00</span>
@@ -34,17 +32,27 @@
         </main>
 
         <aside class="area-comandos">
+            <div class="secao">
+                <p class="titulo-secao">ATALHOS RÁPIDOS ⚡</p>
+                <div class="grade-atalhos">
+                    <button class="btn-atalho" onclick="adicionarPorNome('HEINEKEN LATA')">🍺 HEINEKEN</button>
+                    <button class="btn-atalho" onclick="adicionarPorNome('DOSE OLD PARR')">🥃 OLD PARR</button>
+                    <button class="btn-atalho" onclick="adicionarPorNome('AGUA MINERAL')">💧 ÁGUA</button>
+                    <button class="btn-atalho" onclick="adicionarPorNome('COCA COLA')">🥤 COCA</button>
+                </div>
+            </div>
+
             <div class="campo-bip">
-                <input type="text" id="biparVenda" placeholder="BIPE O PRODUTO..." autofocus>
+                <input type="text" id="biparVenda" placeholder="BIPE O CÓDIGO..." autofocus>
             </div>
 
             <div class="secao">
-                <p style="font-size:12px; color:var(--verde-neon); margin-bottom:5px;">CLIENTE OU MESA</p>
-                <input type="text" id="identificacaoCliente" style="width:100%; padding:15px; border-radius:10px; border:none; background:rgba(0,0,0,0.3); color:white;">
+                <p class="titulo-secao">CLIENTE / MESA</p>
+                <input type="text" id="identificacaoCliente" class="input-moderno" placeholder="Quem está pagando?">
             </div>
 
             <div class="secao">
-                <p style="font-size:12px; color:var(--verde-neon); margin-bottom:10px;">FORMA DE PAGAMENTO</p>
+                <p class="titulo-secao">PAGAMENTO</p>
                 <div class="grade-pagamento">
                     <button class="btn-pg ativo" onclick="escolherPag('Pix', this)">PIX</button>
                     <button class="btn-pg" onclick="escolherPag('Dinheiro', this)">DINHEIRO</button>
@@ -54,16 +62,44 @@
                 <input type="hidden" id="metodoPagamento" value="Pix">
             </div>
 
-            <button class="btn-finalizar" onclick="finalizarVenda()">FINALIZAR VENDA 🍻</button>
+            <button class="btn-finalizar" onclick="finalizarVenda()">CONCLUIR VENDA 🍻</button>
 
-            <div style="display:flex; gap:10px; margin-top:10px;">
-                <button onclick="exportarEstoque()" style="flex:1; padding:10px; background:#222; color:#fff; border:none; border-radius:8px; font-size:10px;">BACKUP</button>
-                <label style="flex:1; padding:10px; background:#222; color:#fff; border-radius:8px; font-size:10px; text-align:center; cursor:pointer;">
-                    XML <input type="file" id="arquivoImportar" style="display:none">
-                </label>
+            <div class="secao card-penduras">
+                <p class="titulo-secao">PENDURAS ATIVAS ⚠️</p>
+                <div id="lista-penduras" class="scroll-penduras"></div>
             </div>
         </aside>
     </div>
+
+    <div id="modalCadastro" class="modal-overlay">
+        <div class="modal-card">
+            <h2>NOVO PRODUTO</h2>
+            <div class="grade-form">
+                <div class="campo">
+                    <label>CÓDIGO DE BARRAS</label>
+                    <input type="text" id="cadCodigo" placeholder="Bipe agora...">
+                </div>
+                <div class="campo">
+                    <label>NOME</label>
+                    <input type="text" id="cadNome" placeholder="Ex: Heineken 350ml">
+                </div>
+                <div class="campo">
+                    <label>PREÇO</label>
+                    <input type="number" step="0.01" id="cadPreco" placeholder="0.00">
+                </div>
+                <div class="campo">
+                    <label>ESTOQUE</label>
+                    <input type="number" id="cadEstoque" placeholder="Qtd">
+                </div>
+            </div>
+            <div class="botoes-modal">
+                <button class="btn-salvar-prod" onclick="salvarNovoProduto()">SALVAR ✅</button>
+                <button class="btn-cancelar-prod" onclick="fecharModal()">FECHAR</button>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn-config-flutuante" onclick="abrirModal()">⚙️ CADASTRAR</button>
 
     <script type="module" src="app.js"></script>
     <script>
