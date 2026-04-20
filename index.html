@@ -3,22 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boteco 934 | PDV</title>
+    <title>Boteco 934 | PDV e Relatórios</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Boteco 934</h1>
-            <div class="total-topo">Total: <span id="total-venda-valor">R$ 0,00</span></div>
+            <div class="total-topo"><span id="total-venda-valor">R$ 0,00</span></div>
         </header>
 
         <section class="caixa-venda">
             <input type="text" id="biparVenda" placeholder="BIPAR PRODUTO" autofocus>
-            
-            <div id="lista-carrinho">
-                </div>
-
+            <div id="lista-carrinho"></div>
             <div class="controles-venda">
                 <input type="text" id="identificacaoCliente" placeholder="Mesa ou Nome">
                 <select id="metodoPagamento">
@@ -27,8 +24,22 @@
                     <option value="Cartão">Cartão</option>
                     <option value="Pendura">Pendura</option>
                 </select>
-                <button onclick="finalizarVenda()">FINALIZAR</button>
+                <button onclick="finalizarVenda()">FINALIZAR VENDA</button>
             </div>
+        </section>
+
+        <section class="caixa-relatorio">
+            <h3>📊 Resumo de Hoje</h3>
+            <div class="cards-financeiro">
+                <div class="mini-card">Pix: <span id="faturamento-pix">R$ 0,00</span></div>
+                <div class="mini-card">Dinheiro: <span id="faturamento-dinheiro">R$ 0,00</span></div>
+                <div class="mini-card">Cartão: <span id="faturamento-cartao">R$ 0,00</span></div>
+                <div class="mini-card pendura">Total Pendura: <span id="faturamento-pendura">R$ 0,00</span></div>
+            </div>
+            
+            <h3>📝 Lista de Penduras (A cobrar)</h3>
+            <ul id="lista-penduras" class="penduras-scroll">
+                </ul>
         </section>
 
         <details>
