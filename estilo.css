@@ -1,119 +1,14 @@
-:root {
-    --verde-neon: #1fcc7d;
-    --vermelho-alerta: #ff5e5e;
-    --bg-deep: #0a0a0a;
-    --glass: rgba(255, 255, 255, 0.03);
+.grade-atalhos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.btn-atalho { 
+    background: #222; color: #1fcc7d; border: 1px solid #333; padding: 15px 5px; 
+    border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 11px;
 }
+.btn-atalho:hover { background: #333; }
 
-body { 
-    margin: 0; 
-    background: var(--bg-deep); 
-    font-family: 'Inter', 'Segoe UI', sans-serif; 
-    height: 100vh; 
-    color: white;
-}
+.input-moderno { width: 100%; padding: 12px; background: rgba(0,0,0,0.4); border: 1px solid #444; color: white; border-radius: 8px; box-sizing: border-box; }
+.titulo-secao { font-size: 11px; color: #888; font-weight: bold; margin-bottom: 8px; letter-spacing: 1px; }
 
-.pdv-layout { 
-    display: grid; 
-    grid-template-columns: 1fr 400px; 
-    height: 100vh; 
-    gap: 10px; 
-    padding: 10px; 
-    box-sizing: border-box; 
-}
-
-/* COLUNA DO CUPOM - ESTILO PAPEL */
-.area-cupom { 
-    background: #ffffff; 
-    border-radius: 12px; 
-    display: flex; 
-    flex-direction: column; 
-    padding: 30px; 
-    color: #333;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-
-.cabecalho-loja h1 { 
-    margin: 0; 
-    font-size: 38px; 
-    color: #000; 
-    text-align: center;
-    letter-spacing: -1px;
-}
-
-.tabela-venda { 
-    flex-grow: 1; 
-    margin-top: 20px; 
-    border-top: 2px dashed #ccc;
-}
-
-table { width: 100%; border-collapse: collapse; font-size: 20px; }
-th { text-align: left; padding: 15px 5px; color: #888; font-size: 14px; text-transform: uppercase; }
-td { padding: 15px 5px; border-bottom: 1px solid #f0f0f0; font-weight: 600; }
-
-.painel-total { 
-    background: #000; 
-    color: var(--verde-neon); 
-    padding: 25px; 
-    border-radius: 12px; 
-    text-align: right; 
-    margin-top: 20px;
-}
-
-.painel-total span { font-size: 85px; font-weight: 900; }
-
-/* COLUNA DE COMANDOS - ESTILO GLASS */
-.area-comandos { 
-    background: var(--glass); 
-    backdrop-filter: blur(10px); 
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 15px; 
-    padding: 20px; 
-    display: flex; 
-    flex-direction: column; 
-    gap: 15px;
-}
-
-.campo-bip input { 
-    width: 100%; 
-    padding: 20px; 
-    font-size: 28px; 
-    background: rgba(0,0,0,0.5); 
-    border: 2px solid var(--verde-neon); 
-    color: white; 
-    border-radius: 12px;
-    box-sizing: border-box;
-}
-
-.grade-pagamento { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    gap: 10px; 
-}
-
-.btn-pg { 
-    height: 80px; 
-    border-radius: 12px; 
-    border: 1px solid rgba(255,255,255,0.1); 
-    background: rgba(255,255,255,0.05); 
-    color: white; 
-    font-weight: bold; 
-    cursor: pointer; 
-    transition: 0.3s;
-}
-
-.btn-pg:hover { background: rgba(255,255,255,0.15); }
-.btn-pg.ativo { background: var(--verde-neon); color: black; border: none; box-shadow: 0 0 20px rgba(31, 204, 125, 0.4); }
-.btn-pendura { border-left: 5px solid var(--vermelho-alerta); }
-
-.btn-finalizar { 
-    background: var(--verde-neon); 
-    color: black; 
-    font-size: 24px; 
-    font-weight: 900; 
-    padding: 30px; 
-    border: none; 
-    border-radius: 15px; 
-    cursor: pointer; 
-    margin-top: auto;
-}
+.card-penduras { background: rgba(255, 94, 94, 0.05); border: 1px solid rgba(255, 94, 94, 0.2); border-radius: 10px; padding: 10px; }
+.scroll-penduras { max-height: 120px; overflow-y: auto; font-size: 13px; }
+.item-pendura { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #222; }
+.item-pendura span { color: #ff5e5e; font-weight: bold; }
