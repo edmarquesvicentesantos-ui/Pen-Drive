@@ -3,37 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boteco 934 | PDV Pro</title>
+    <title>Boteco 934 | PDV Balcão</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Boteco 934</h1>
-            <span id="status-busca">Aguardando código...</span>
+            <div id="caixa-resumo">Total Venda: <span id="total-venda">R$ 0,00</span></div>
         </header>
 
-        <section class="caixa-cadastro">
+        <section class="caixa-venda">
             <div class="linha">
-                <input type="text" id="codigoBarra" placeholder="Bipar Código" autofocus>
-                <button onclick="buscarProduto()" style="background: #3498db; width: 50px;"><i class="fas fa-search"></i>🔎</button>
-                <input type="text" id="nomeProduto" placeholder="Nome do Produto">
+                <input type="text" id="biparVenda" placeholder="Bipar Produto para Venda" autofocus>
             </div>
+            <div id="lista-carrinho"></div>
             <div class="linha">
-                <select id="categoriaProduto">
-                    <option value="Bebidas">Bebidas</option>
-                    <option value="Petiscos">Petiscos</option>
-                    <option value="Boticário">Boticário</option>
-                    <option value="Outros">Outros</option>
+                <select id="metodoPagamento">
+                    <option value="Dinheiro">Dinheiro</option>
+                    <option value="Pix">Pix</option>
+                    <option value="Cartão">Cartão</option>
+                    <option value="Pendura">Pendura (Anotar)</option>
                 </select>
-                <input type="text" id="fotoProduto" placeholder="Link da Foto (URL)">
-            </div>
-            <div class="linha">
-                <input type="number" id="custoProduto" placeholder="Custo R$">
-                <input type="number" id="precoProduto" placeholder="Venda R$">
-                <button onclick="salvarProduto()" style="width: 100px;">SALVAR</button>
+                <input type="text" id="identificacaoCliente" placeholder="Nome do Cliente/Mesa">
+                <button onclick="finalizarVenda()" id="btn-finalizar">FINALIZAR</button>
             </div>
         </section>
+
+        <details>
+            <summary>📦 Cadastrar Novo Produto / Estoque</summary>
+            <section class="caixa-cadastro">
+                <div class="linha">
+                    <input type="text" id="codigoBarra" placeholder="Código">
+                    <input type="text" id="nomeProduto" placeholder="Nome">
+                </div>
+                <div class="linha">
+                    <input type="number" id="custoProduto" placeholder="Custo R$">
+                    <input type="number" id="precoProduto" placeholder="Venda R$">
+                    <button onclick="salvarProduto()">+</button>
+                </div>
+            </section>
+        </details>
 
         <div id="grid-produtos" class="grid"></div>
     </div>
