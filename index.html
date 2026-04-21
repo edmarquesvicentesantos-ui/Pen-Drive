@@ -130,7 +130,16 @@
             <button class="btn-cancelar-prod" onclick="fecharModal()">FECHAR</button>
         </div>
     </div>
-
+<div class="grade-form">
+    <input type="text" id="cadCodigo" placeholder="Código de Barras">
+    <input type="text" id="cadNome" placeholder="Nome do Produto">
+    <input type="text" id="cadFoto" placeholder="URL da Foto (ou buscará automática)">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <input type="number" step="0.01" id="cadCustoUn" placeholder="Custo Un. R$">
+        <input type="number" step="0.01" id="cadPreco" placeholder="Venda Un. R$">
+    </div>
+    <input type="number" id="cadEstoque" placeholder="Qtd Inicial">
+</div>
     <button class="btn-config-flutuante" onclick="abrirModal()">⚙️ GESTÃO</button>
 
     <script type="module" src="app.js"></script>
