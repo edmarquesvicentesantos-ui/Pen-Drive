@@ -1,106 +1,47 @@
 :root { --verde: #1fcc7d; --vermelho: #ff5e5e; --laranja: #ffa500; --bg: #0a0a0a; }
 body { margin: 0; background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
 .pdv-layout { display: grid; grid-template-columns: 1fr 400px; height: 100vh; padding: 10px; gap: 10px; box-sizing: border-box; }
-.area-cupom { background: white; color: #333; border-radius: 15px; padding: 30px; display: flex; flex-direction: column; }
+.area-cupom { background: white; color: #333; border-radius: 15px; padding: 30px; display: flex; flex-direction: column; overflow: hidden; }
 .cabecalho-loja { text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 10px; }
-.cabecalho-loja h1 { margin: 0; color: #000; font-size: 35px; }
+.cabecalho-loja h1 { margin: 0; color: #000; font-size: 32px; }
 .tabela-venda { flex-grow: 1; overflow-y: auto; margin-top: 20px; }
 table { width: 100%; border-collapse: collapse; }
-td { padding: 12px 10px; border-bottom: 1px solid #f9f9f9; font-weight: bold; font-size: 18px; }
-.painel-total { background: #000; color: var(--verde); padding: 20px; border-radius: 12px; text-align: right; margin-top: 20px; }
-.painel-total span { font-size: 80px; font-weight: 900; }
-.area-comandos { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; display: flex; flex-direction: column; gap: 10px; border: 1px solid rgba(255,255,255,0.1); }
-.titulo-secao { font-size: 10px; color: var(--verde); font-weight: bold; margin: 0; }
+td { padding: 12px 10px; border-bottom: 1px solid #f2f2f2; font-weight: bold; font-size: 18px; }
+.painel-total { background: #000; color: var(--verde); padding: 15px; border-radius: 12px; text-align: right; margin-top: 10px; }
+.painel-total span { font-size: 60px; font-weight: 900; }
+.area-comandos { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; display: flex; flex-direction: column; gap: 8px; border: 1px solid rgba(255,255,255,0.1); }
+.titulo-secao { font-size: 10px; color: var(--verde); font-weight: bold; margin-bottom: 5px; }
 .grade-atalhos { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
 .btn-atalho { background: #111; color: white; border: 1px solid #333; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 11px; }
-#biparVenda { width: 100%; padding: 15px; font-size: 25px; background: #000; border: 2px solid var(--verde); color: white; border-radius: 10px; box-sizing: border-box; outline: none; }
+#biparVenda { width: 100%; padding: 15px; font-size: 20px; background: #000; border: 2px solid var(--verde); color: white; border-radius: 10px; box-sizing: border-box; outline: none; }
 .input-moderno { width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; }
 .grade-pagamento { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
 .btn-pg { background: #222; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
 .btn-pg.ativo { background: var(--verde); color: black; box-shadow: 0 0 15px var(--verde); }
 .btn-pendura { border-left: 4px solid var(--vermelho); }
-.btn-finalizar { background: var(--verde); color: black; font-size: 22px; font-weight: bold; padding: 20px; border: none; border-radius: 12px; cursor: pointer; }
-.grade-dados { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.btn-dados { padding: 10px; background: #111; color: #888; border: 1px solid #333; border-radius: 8px; font-size: 10px; cursor: pointer; text-align: center; }
-.card-reposicao { background: rgba(255, 165, 0, 0.1); border: 1px solid var(--laranja); border-radius: 8px; padding: 10px; }
-.item-alerta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 11px; }
-.item-alerta button { background: var(--laranja); color: black; border: none; padding: 4px 8px; border-radius: 4px; font-size: 9px; cursor: pointer; font-weight: bold; }
-.scroll-especial { max-height: 80px; overflow-y: auto; }
+.btn-finalizar { background: var(--verde); color: black; font-size: 20px; font-weight: bold; padding: 18px; border: none; border-radius: 12px; cursor: pointer; margin-top: 5px; }
+.grade-dados { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.btn-dados { padding: 8px; background: #111; color: #888; border: 1px solid #333; border-radius: 8px; font-size: 10px; cursor: pointer; text-align: center; }
+.scroll-especial { max-height: 70px; overflow-y: auto; }
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 100; }
-.modal-card { background: #111; padding: 30px; border-radius: 20px; width: 380px; border: 1px solid #333; }
-.abas-gestao { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
-.aba-btn { flex: 1; padding: 10px; background: #222; border: none; color: #888; cursor: pointer; border-radius: 5px; font-weight: bold; }
-.aba-btn.ativa { background: var(--verde); color: black; }
-.resumo-caixa { margin-top: 20px; background: #000; padding: 15px; border-radius: 10px; border: 1px solid #333; }
+.modal-card { background: #111; padding: 25px; border-radius: 20px; width: 360px; border: 1px solid #333; }
+.abas-gestao { display: flex; gap: 5px; margin-bottom: 15px; }
+.aba-btn { flex: 1; padding: 10px; background: #222; border: none; color: #888; cursor: pointer; border-radius: 5px; }
+.aba-btn.ativa { background: var(--verde); color: black; font-weight: bold; }
+.resumo-caixa { background: #000; padding: 15px; border-radius: 10px; border: 1px solid #333; }
 .resumo-caixa p { margin: 5px 0; font-size: 14px; display: flex; justify-content: space-between; }
 .btn-salvar-prod { width: 100%; background: var(--verde); color: black; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-.btn-cancelar-prod { width: 100%; background: #333; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; margin-top: 15px; }
+.btn-cancelar-prod { width: 100%; background: #333; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; margin-top: 10px; }
 .btn-config-flutuante { position: fixed; bottom: 20px; right: 20px; background: #000; color: var(--verde); border: 1px solid var(--verde); padding: 10px 20px; border-radius: 50px; cursor: pointer; }
-.grade-form input, .grade-form select { width: 100%; padding: 12px; margin-bottom: 10px; background: #000; border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; }
-/* AJUSTE PARA IMPRESSORA TÉRMICA 50mm/58mm */
-/* CONFIGURAÇÃO EXCLUSIVA PARA IMPRESSÃO TÉRMICA 50mm */
+
+/* CONFIG IMPRESSÃO 50mm */
 @media print {
-    /* 1. Esconde absolutamente tudo na página */
-    body * { 
-        visibility: hidden; 
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-
-    /* 2. Faz aparecer APENAS a área do cupom branco */
-    .area-cupom, .area-cupom * { 
-        visibility: visible; 
-    }
-
-    /* 3. Ajusta o cupom para ocupar o papel de 50mm sem margens */
-    .area-cupom {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100vw; /* Força a largura total do papel */
-        background: white !important;
-        color: black !important;
-    }
-
-    /* 4. Ajusta os textos para ficarem legíveis na térmica */
-    .cabecalho-loja h1 { 
-        font-size: 16px !important; 
-        margin-bottom: 2px !important;
-    }
-    
-    .cabecalho-loja p { font-size: 10px !important; }
-
-    table { width: 100% !important; }
-    
-    td { 
-        font-size: 12px !important; 
-        padding: 4px 0 !important;
-        border-bottom: 1px dashed #ccc !important;
-    }
-
-    .painel-total { 
-        background: none !important; 
-        color: black !important; 
-        border-top: 2px solid black !important;
-        text-align: right !important;
-        padding: 10px 0 !important;
-    }
-
-    .painel-total span { 
-        font-size: 24px !important; 
-    }
-
-    /* 5. Esconde os botões de configuração e áreas laterais */
-    .area-comandos, .btn-config-flutuante, .modal-overlay, .grade-dados { 
-        display: none !important; 
-    }
-}
-    /* Ajusta fontes para o tamanho pequeno da térmica */
-    .cabecalho-loja h1 { font-size: 18px; }
-    td { font-size: 14px; padding: 5px 0; }
-    .painel-total { background: none; color: black; border-top: 1px dashed black; }
-    .painel-total span { font-size: 30px; }
-
-    /* Remove botões e o resto do layout */
+    body * { visibility: hidden; }
+    .area-cupom, .area-cupom * { visibility: visible; }
+    .area-cupom { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; border: none; }
     .area-comandos, .btn-config-flutuante, .modal-overlay { display: none !important; }
+    .cabecalho-loja h1 { font-size: 18px; }
+    td { font-size: 12px; padding: 5px 0; border-bottom: 1px dashed #ccc; }
+    .painel-total { background: none; color: black; border-top: 1px solid #000; padding: 5px 0; }
+    .painel-total span { font-size: 22px; }
 }
