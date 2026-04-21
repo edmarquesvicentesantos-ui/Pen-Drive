@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boteco 934 | PDV & Financeiro</title>
+    <title>Boteco 934 | Gestão Total</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
     <div class="pdv-layout">
+        <!-- ÁREA DO CUPOM (O QUE VAI PARA A TÉRMICA) -->
         <main class="area-cupom">
             <div class="cabecalho-loja">
                 <h1>BOTECO 934</h1>
                 <p>PETROLINA - PE</p>
+                <p id="data-cupom"></p>
             </div>
             <div class="tabela-venda">
                 <table>
                     <thead>
                         <tr>
-                            <th>DESCRIÇÃO</th>
+                            <th>ITEM</th>
                             <th>QTD</th>
                             <th style="text-align:right">TOTAL</th>
                         </tr>
@@ -26,11 +28,15 @@
                 </table>
             </div>
             <div class="painel-total">
-                <div style="font-size: 14px; font-weight: bold;">TOTAL A PAGAR</div>
+                <div style="font-size: 12px; font-weight: bold;">TOTAL A PAGAR</div>
                 R$ <span id="total-venda-valor">0,00</span>
+            </div>
+            <div class="rodape-cupom">
+                <p>Obrigado pela preferência!</p>
             </div>
         </main>
 
+        <!-- ÁREA DE COMANDOS -->
         <aside class="area-comandos">
             <div class="secao">
                 <p class="titulo-secao">ATALHOS ⚡</p>
@@ -48,7 +54,7 @@
 
             <div class="secao">
                 <p class="titulo-secao">CLIENTE / MESA</p>
-                <input type="text" id="identificacaoCliente" class="input-moderno" placeholder="NOME DO CLIENTE..." list="lista-clientes-sugestao">
+                <input type="text" id="identificacaoCliente" class="input-moderno" placeholder="QUEM ESTÁ PAGANDO?" list="lista-clientes-sugestao">
                 <datalist id="lista-clientes-sugestao"></datalist>
             </div>
 
@@ -63,23 +69,20 @@
                 <input type="hidden" id="metodoPagamento" value="Pix">
             </div>
 
-            <button class="btn-finalizar" onclick="finalizarVenda()">CONCLUIR VENDA 🍻</button>
+            <button class="btn-finalizar" onclick="finalizarVenda()">CONCLUIR E IMPRIMIR 🍻</button>
 
             <div class="grade-dados">
                 <button class="btn-dados" onclick="exportarEstoque()">📤 BACKUP</button>
-                <label class="btn-dados">
-                    📥 IMPORTAR
-                    <input type="file" id="arquivoImportar" style="display:none" onchange="importarEstoque(event)">
-                </label>
+                <label class="btn-dados">📥 IMPORTAR <input type="file" id="arquivoImportar" style="display:none" onchange="importarEstoque(event)"></label>
             </div>
 
             <div class="secao card-reposicao">
-                <p class="titulo-secao">REPOSIÇÃO 🛒</p>
+                <p class="titulo-secao">ESTOQUE BAIXO 🛒</p>
                 <div id="lista-reposicao" class="scroll-especial"></div>
             </div>
 
             <div class="secao card-penduras">
-                <p class="titulo-secao">PENDURAS ⚠️</p>
+                <p class="titulo-secao">PENDURAS ATIVAS ⚠️</p>
                 <div id="lista-penduras" class="scroll-especial"></div>
             </div>
         </aside>
@@ -87,46 +90,44 @@
 
     <!-- MODAL DE GESTÃO (ESTOQUE + FINANCEIRO) -->
     <div id="modalCadastro" class="modal-overlay">
-        <div class="modal-card financeiro">
+        <div class="modal-card">
             <div class="abas-gestao">
                 <button id="btn-aba-prod" class="aba-btn ativa" onclick="mudarAba('produtos')">PRODUTOS</button>
-                <button id="btn-aba-fin" class="aba-btn" onclick="mudarAba('contas')">FINANCEIRO</button>
+                <button id="btn-aba-fin" class="aba-btn" onclick="mudarAba('contas')">LUCRO REAL</button>
             </div>
 
             <div id="aba-produtos" class="aba-conteudo">
-                <h2>ESTOQUE</h2>
+                <h2>CADASTRAR PRODUTO</h2>
                 <div class="grade-form">
                     <input type="text" id="cadCodigo" placeholder="Código de Barras">
                     <input type="text" id="cadNome" placeholder="Nome do Produto">
-                    <input type="number" step="0.01" id="cadPreco" placeholder="Preço Venda">
-                    <input type="number" id="cadEstoque" placeholder="Qtd Estoque">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <input type="number" step="0.01" id="cadCustoUn" placeholder="Custo Un. R$">
+                        <input type="number" step="0.01" id="cadPreco" placeholder="Venda Un. R$">
+                    </div>
+                    <input type="number" id="cadEstoque" placeholder="Qtd Inicial">
                 </div>
-                <button class="btn-salvar-prod" onclick="salvarNovoProduto()">CADASTRAR PRODUTO ✅</button>
+                <button class="btn-salvar-prod" onclick="salvarNovoProduto()">SALVAR NO ESTOQUE ✅</button>
             </div>
 
             <div id="aba-contas" class="aba-conteudo" style="display:none">
-                <h2>CONTAS A PAGAR / RECEBER</h2>
-                <div class="grade-form">
-                    <input type="text" id="finDescricao" placeholder="Descrição (Ex: Luz, Ambev)">
-                    <input type="number" step="0.01" id="finValor" placeholder="Valor R$">
-                    <select id="finTipo" class="input-moderno">
-                        <option value="Saída">🔴 DESPESA (A Pagar)</option>
-                        <option value="Entrada">🟢 ENTRADA (Extra)</option>
-                    </select>
-                </div>
-                <button class="btn-salvar-prod" style="background: #e67e22" onclick="salvarFinanceiro()">LANÇAR NO CAIXA 💰</button>
-                
+                <h2>DINHEIRO NO BOLSO</h2>
                 <div class="resumo-caixa">
-                    <p>Vendas Hoje: <span id="resumo-vendas" style="color: var(--verde)">R$ 0,00</span></p>
-                    <p>Despesas Hoje: <span id="resumo-despesas" style="color: var(--vermelho)">R$ 0,00</span></p>
-                    <hr style="border: 0; border-top: 1px solid #333; margin: 10px 0;">
-                    <p><strong>SALDO FINAL: <span id="resumo-saldo">R$ 0,00</span></strong></p>
+                    <p>Faturamento Bruto: <span id="resumo-vendas" style="color: var(--verde)">R$ 0,00</span></p>
+                    <p>Custo Mercadoria: <span id="resumo-custo-total" style="color: var(--vermelho)">R$ 0,00</span></p>
+                    <p>Despesas Fixas: <span id="resumo-despesas" style="color: var(--vermelho)">R$ 0,00</span></p>
+                    <hr>
+                    <p><strong>LUCRO LÍQUIDO: <span id="resumo-saldo">R$ 0,00</span></strong></p>
+                </div>
+                <div class="grade-form" style="margin-top:15px">
+                    <p class="titulo-secao">LANÇAR DESPESA (LUZ, GELO, ALUGUEL)</p>
+                    <input type="text" id="finDescricao" placeholder="Descrição">
+                    <input type="number" step="0.01" id="finValor" placeholder="Valor R$">
+                    <button class="btn-salvar-prod" style="background:#e67e22" onclick="salvarFinanceiro()">LANÇAR DESPESA 💰</button>
                 </div>
             </div>
 
-            <div class="botoes-modal">
-                <button class="btn-cancelar-prod" onclick="fecharModal()">FECHAR</button>
-            </div>
+            <button class="btn-cancelar-prod" onclick="fecharModal()">FECHAR</button>
         </div>
     </div>
 
@@ -142,5 +143,3 @@
     </script>
 </body>
 </html>
-index.html
-Exibindo index.html.
