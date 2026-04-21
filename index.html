@@ -1,14 +1,14 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boteco 934 | Gestão Total</title>
+    <title>Boteco 934 | PDV Pro</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
     <div class="pdv-layout">
-        <!-- ÁREA DO CUPOM (O QUE VAI PARA A TÉRMICA) -->
         <main class="area-cupom">
             <div class="cabecalho-loja">
                 <h1>BOTECO 934</h1>
@@ -19,6 +19,7 @@
                 <table>
                     <thead>
                         <tr>
+                            <th>FOTO</th>
                             <th>ITEM</th>
                             <th>QTD</th>
                             <th style="text-align:right">TOTAL</th>
@@ -31,12 +32,8 @@
                 <div style="font-size: 12px; font-weight: bold;">TOTAL A PAGAR</div>
                 R$ <span id="total-venda-valor">0,00</span>
             </div>
-            <div class="rodape-cupom">
-                <p>Obrigado pela preferência!</p>
-            </div>
         </main>
 
-        <!-- ÁREA DE COMANDOS -->
         <aside class="area-comandos">
             <div class="secao">
                 <p class="titulo-secao">ATALHOS ⚡</p>
@@ -80,15 +77,10 @@
                 <p class="titulo-secao">ESTOQUE BAIXO 🛒</p>
                 <div id="lista-reposicao" class="scroll-especial"></div>
             </div>
-
-            <div class="secao card-penduras">
-                <p class="titulo-secao">PENDURAS ATIVAS ⚠️</p>
-                <div id="lista-penduras" class="scroll-especial"></div>
-            </div>
         </aside>
     </div>
 
-    <!-- MODAL DE GESTÃO (ESTOQUE + FINANCEIRO) -->
+    <!-- MODAL DE GESTÃO -->
     <div id="modalCadastro" class="modal-overlay">
         <div class="modal-card">
             <div class="abas-gestao">
@@ -97,49 +89,40 @@
             </div>
 
             <div id="aba-produtos" class="aba-conteudo">
-                <h2>CADASTRAR PRODUTO</h2>
+                <h2>CADASTRO DE PRODUTO</h2>
                 <div class="grade-form">
                     <input type="text" id="cadCodigo" placeholder="Código de Barras">
                     <input type="text" id="cadNome" placeholder="Nome do Produto">
+                    <input type="text" id="cadFoto" placeholder="URL da Foto (Link da Imagem)">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                        <input type="number" step="0.01" id="cadCustoUn" placeholder="Custo Un. R$">
-                        <input type="number" step="0.01" id="cadPreco" placeholder="Venda Un. R$">
+                        <input type="number" step="0.01" id="cadCustoUn" placeholder="Custo Unitário R$">
+                        <input type="number" step="0.01" id="cadPreco" placeholder="Preço de Venda R$">
                     </div>
-                    <input type="number" id="cadEstoque" placeholder="Qtd Inicial">
+                    <input type="number" id="cadEstoque" placeholder="Quantidade em Estoque">
                 </div>
-                <button class="btn-salvar-prod" onclick="salvarNovoProduto()">SALVAR NO ESTOQUE ✅</button>
+                <button class="btn-salvar-prod" onclick="salvarNovoProduto()">SALVAR PRODUTO ✅</button>
             </div>
 
             <div id="aba-contas" class="aba-conteudo" style="display:none">
-                <h2>DINHEIRO NO BOLSO</h2>
+                <h2>FECHAMENTO / DINHEIRO NO BOLSO</h2>
                 <div class="resumo-caixa">
-                    <p>Faturamento Bruto: <span id="resumo-vendas" style="color: var(--verde)">R$ 0,00</span></p>
+                    <p>Vendas Totais: <span id="resumo-vendas" style="color: var(--verde)">R$ 0,00</span></p>
                     <p>Custo Mercadoria: <span id="resumo-custo-total" style="color: var(--vermelho)">R$ 0,00</span></p>
-                    <p>Despesas Fixas: <span id="resumo-despesas" style="color: var(--vermelho)">R$ 0,00</span></p>
+                    <p>Despesas Lançadas: <span id="resumo-despesas" style="color: var(--vermelho)">R$ 0,00</span></p>
                     <hr>
                     <p><strong>LUCRO LÍQUIDO: <span id="resumo-saldo">R$ 0,00</span></strong></p>
                 </div>
                 <div class="grade-form" style="margin-top:15px">
-                    <p class="titulo-secao">LANÇAR DESPESA (LUZ, GELO, ALUGUEL)</p>
-                    <input type="text" id="finDescricao" placeholder="Descrição">
+                    <input type="text" id="finDescricao" placeholder="Descrição da Despesa">
                     <input type="number" step="0.01" id="finValor" placeholder="Valor R$">
-                    <button class="btn-salvar-prod" style="background:#e67e22" onclick="salvarFinanceiro()">LANÇAR DESPESA 💰</button>
+                    <button class="btn-salvar-prod" style="background:#e67e22" onclick="salvarFinanceiro()">LANÇAR CONTA 💰</button>
                 </div>
             </div>
 
             <button class="btn-cancelar-prod" onclick="fecharModal()">FECHAR</button>
         </div>
     </div>
-<div class="grade-form">
-    <input type="text" id="cadCodigo" placeholder="Código de Barras">
-    <input type="text" id="cadNome" placeholder="Nome do Produto">
-    <input type="text" id="cadFoto" placeholder="URL da Foto (ou buscará automática)">
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-        <input type="number" step="0.01" id="cadCustoUn" placeholder="Custo Un. R$">
-        <input type="number" step="0.01" id="cadPreco" placeholder="Venda Un. R$">
-    </div>
-    <input type="number" id="cadEstoque" placeholder="Qtd Inicial">
-</div>
+
     <button class="btn-config-flutuante" onclick="abrirModal()">⚙️ GESTÃO</button>
 
     <script type="module" src="app.js"></script>
