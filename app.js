@@ -14,7 +14,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 let carrinho = [];
 
-// MODAL E ABAS (CORRIGIDO)
 window.abrirModal = () => { document.getElementById('modalCadastro').style.display = 'flex'; };
 window.fecharModal = () => { document.getElementById('modalCadastro').style.display = 'none'; };
 
@@ -31,7 +30,6 @@ window.mudarAba = (aba) => {
     }
 };
 
-// CARRINHO E VENDAS
 async function adicionar(valor, porNome = false) {
     const q = porNome ? query(collection(db, "estoque"), where("nome", "==", valor)) : query(collection(db, "estoque"), where("codigo", "==", valor));
     const snap = await getDocs(q);
@@ -86,7 +84,6 @@ window.finalizarVenda = async () => {
     document.getElementById('identificacaoCliente').value = "";
 };
 
-// ESTOQUE E FINANCEIRO
 window.salvarNovoProduto = async () => {
     const p = {
         codigo: document.getElementById('cadCodigo').value,
@@ -99,6 +96,9 @@ window.salvarNovoProduto = async () => {
     await addDoc(collection(db, "estoque"), p);
     alert("Salvo!");
     fecharModal();
+    // Limpa calculadora
+    document.getElementById('calcPrecoCaixa').value = "";
+    document.getElementById('calcQtdCaixa').value = "";
 };
 
 window.salvarFinanceiro = async () => {
@@ -124,13 +124,10 @@ async function atualizarResumoFinanceiro() {
     document.getElementById('resumo-saldo').innerText = `R$ ${(fat - custo - desp).toFixed(2)}`;
 }
 
-onSnapshot(collection(db, "estoque"), (s) => {
-    const lista = document.getElementById('lista-reposicao'); lista.innerHTML = "";
-    s.forEach(d => { if (Number(d.data().estoqueAtual) <= 5) lista.innerHTML += `<div>${d.data().nome} (${d.data().estoqueAtual})</div>`; });
-});
-
 window.exportarEstoque = async () => {
     const snap = await getDocs(collection(db, "estoque"));
     const dados = []; snap.forEach(doc => dados.push(doc.data()));
     const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(dados, null, 2)], {type:"application/json"})); a.download=`backup_boteco.json`; a.click();
 };
+app.js
+Exibindo app.js.
