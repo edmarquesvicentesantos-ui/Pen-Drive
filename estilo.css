@@ -37,3 +37,29 @@ td { padding: 12px 10px; border-bottom: 1px solid #f9f9f9; font-weight: bold; fo
 .btn-cancelar-prod { width: 100%; background: #333; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; margin-top: 15px; }
 .btn-config-flutuante { position: fixed; bottom: 20px; right: 20px; background: #000; color: var(--verde); border: 1px solid var(--verde); padding: 10px 20px; border-radius: 50px; cursor: pointer; }
 .grade-form input, .grade-form select { width: 100%; padding: 12px; margin-bottom: 10px; background: #000; border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; }
+/* AJUSTE PARA IMPRESSORA TÉRMICA 50mm/58mm */
+@media print {
+    /* Esconde tudo que não é o cupom */
+    body * { visibility: hidden; }
+    .area-cupom, .area-cupom * { visibility: visible; }
+    
+    /* Posiciona o cupom no topo da página de impressão */
+    .area-cupom {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%; /* Ocupa a largura da bobina */
+        padding: 0;
+        margin: 0;
+        box-shadow: none;
+    }
+
+    /* Ajusta fontes para o tamanho pequeno da térmica */
+    .cabecalho-loja h1 { font-size: 18px; }
+    td { font-size: 14px; padding: 5px 0; }
+    .painel-total { background: none; color: black; border-top: 1px dashed black; }
+    .painel-total span { font-size: 30px; }
+
+    /* Remove botões e o resto do layout */
+    .area-comandos, .btn-config-flutuante, .modal-overlay { display: none !important; }
+}
