@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Cal. Boteco934</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap');
+        :root { --bg: #020617; --card: #111827; --accent: #22c55e; --gold: #f59e0b; --red: #ef4444; --text: #ffffff; --border: #1e293b; }
+        body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); padding: 15px; margin: 0; }
+        .box { background: var(--card); padding: 18px; border-radius: 15px; margin-bottom: 15px; border: 1px solid var(--border); }
+        h2 { color: var(--gold); font-size: 1.1rem; margin-top: 0; display: flex; align-items: center; gap: 8px; }
+        input, select, button { width: 100%; padding: 12px; margin: 6px 0; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; color: white; font-size: 15px; box-sizing: border-box; }
+        button { background: var(--accent); color: #000; font-weight: bold; border: none; cursor: pointer; }
+        .result { background: #020617; padding: 12px; border-radius: 8px; margin-top: 10px; border-left: 4px solid var(--accent); }
+        .lucro-final { font-size: 1.4rem; color: var(--accent); font-weight: bold; }
+        footer { text-align: center; opacity: 0.5; font-size: 0.8rem; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="box">
+        <h2><i class="fas fa-wallet"></i> Quanto vai pro meu bolso?</h2>
+        <input type="number" id="vendaPreco" placeholder="Preço que vendi (R$)">
+        <input type="number" id="custoProduto" placeholder="Custo que paguei (R$)">
+        
+        <select id="maquininha">
+            <option value="0">Dinheiro / Pix (0%)</option>
+            <option value="1.99">Débito (Ex: 1.99%)</option>
+            <option value="3.49">Crédito (Ex: 3.49%)</option>
+            <option value="4.99">Crédito Parcelado (Ex: 4.99%)</option>
+        </select>
+        
+        <input type="number" id="outrosCustos" placeholder="Outros custos (Gelo, copo, etc) - R$" value="0">
+        
+        <button onclick="calcularBolso()">VER MEU LUCRO REAL</button>
+        
+        <div class="result" id="resBolso">
+            Toque em calcular para ver o resultado.
+        </div>
+    </div>
+
+    <div class="box">
+        <h2><i class="fas fa-glass-whiskey"></i> Lucro por Dose</h2>
+        <input type="number" id="custoG" placeholder="Custo da Garrafa">
+        <input type="number" id="vendaD" placeholder="Preço da Dose">
+        <input type="number" id="mlD" value="50" placeholder="ML da Dose">
+        <button onclick="calcDose()">CALCULAR LUCRO DOSE</button>
+        <div class="result" id="resDose">...</div>
+    </div>
+
+    <footer>Super Cal. Boteco934 - Petrolina</footer>
+
+<script>
+    const moeda = (v) => Number(v).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+    function calcularBolso() {
+        const venda = parseFloat(document.getElementById('vendaPreco').value) || 0;
+        const custo = parseFloat(document.getElementById('custoProduto').value) || 0;
+        const taxa = parseFloat(document.getElementById('maquininha').value) || 0;
+        const outros = parseFloat(document.getElementById('outrosCustos').value) || 0;
+
+        // Descontos
+        const valorTaxa = venda * (taxa / 100);
+        const lucroLiquido = venda - custo - valorTaxa - outros;
+        const margem = (lucroLiquido / venda) * 100;
+
+        document.getElementById('resBolso').innerHTML = `
+            <div>Taxa da Maquininha: <span style="color:var(--red)">- ${moeda(valorTaxa)}</span></div>
+            <div>Custo do Produto: <span style="color:var(--red)">- ${moeda(custo)}</span></div>
+            <hr style="border:0; border-top:1px solid var(--border); margin:10px 0;">
+            <div style="font-size:0.9rem">NO SEU BOLSO:</div>
+            <div class="lucro-final">${moeda(lucroLiquido)}</div>
+            <div style="font-size:0.8rem; opacity:0.7">Sua margem real: ${margem.toFixed(1)}%</div>
+        `;
+    }
+
+    function calcDose() {
+        const custoG = parseFloat(document.getElementById('custoG').value) || 0;
+        const vendaD = parseFloat(document.getElementById('vendaD').value) || 0;
+        const mlD = parseFloat(document.getElementById('mlD').value) || 50;
+        
+        const doses = 1000 / mlD;
+        const custoDose = custoG / doses;
+        const lucroDose = vendaD - custoDose;
+        const lucroTotal = lucroDose * doses;
+
+        document.getElementById('resDose').innerHTML = `
+            Custo por dose: ${moeda(custoDose)}<br>
+            Lucro por dose: ${moeda(lucroDose)}<br>
+            <b>Lucro Total na Garrafa: ${moeda(lucroTotal)}</b>
+        `;
+    }
+</script>
+</body>
+</html>
