@@ -143,3 +143,35 @@ window.exportarEstoque = async () => {
     const dados = []; snap.forEach(doc => dados.push(doc.data()));
     const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(dados, null, 2)], {type:"application/json"})); a.download=`backup_boteco.json`; a.click();
 };
+// Função para buscar imagem no Google (Simplificada)
+async function buscarInfoOnline(codigo) {
+    console.log("Buscando produto " + codigo + " na rede...");
+    // Usamos o Google para pesquisar o código de barras
+    const buscaUrl = `https://www.google.com/search?q=produto+codigo+barras+${codigo}&tbm=isch`;
+    
+    // Como não podemos extrair o dado direto por segurança, 
+    // abrimos o modal e sugerimos o preenchimento ou mostramos o link
+    abrirModal();
+    document.getElementById('cadCodigo').value = codigo;
+    document.getElementById('cadNome').placeholder = "Buscando nome...";
+    
+    // DICA: O ideal aqui para ser 100% automático é usar uma API como a 'Cosmos' ou 'Bluesoft'
+    // Mas para o seu uso no Boteco, abrir a busca do Google ajuda muito:
+    window.open(buscaUrl, '_blank'); 
+}
+
+// Alteração na função Adicionar
+async function adicionar(valor, porNome = false) {
+    const q = porNome ? query(collection(db, "estoque"), where("nome", "==", valor)) : query(collection(db, "estoque"), where("codigo", "==", valor));
+    const snap = await getDocs(q);
+    
+    if (!snap.empty) {
+        // ... (resto do código de adicionar ao carrinho igual ao anterior)
+    } else {
+        // SE NÃO ACHOU, CHAMA A BUSCA ONLINE
+        if (!porNome) {
+            const confirmar = confirm("Produto não cadastrado. Deseja buscar na internet?");
+            if (confirmar) buscarInfoOnline(valor);
+        }
+    }
+}
