@@ -1,4 +1,4 @@
-:root { --verde: #1fcc7d; --vermelho: #ff5e5e; --laranja: #ffa500; --bg: #0a0a0a; }
+:root { --verde: #1fcc7d; --vermelho: #ff5e5e; --bg: #0a0a0a; }
 body { margin: 0; background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
 .pdv-layout { display: grid; grid-template-columns: 1fr 400px; height: 100vh; padding: 10px; gap: 10px; box-sizing: border-box; }
 .area-cupom { background: white; color: #333; border-radius: 15px; padding: 25px; display: flex; flex-direction: column; overflow: hidden; }
@@ -23,11 +23,11 @@ td { padding: 10px 5px; border-bottom: 1px solid #eee; font-weight: bold; font-s
 .grade-dados { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
 .btn-dados { padding: 8px; background: #111; color: #888; border: 1px solid #333; border-radius: 8px; font-size: 10px; cursor: pointer; text-align: center; }
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 9999; }
-.modal-card { background: #111; padding: 25px; border-radius: 20px; width: 380px; border: 1px solid #333; }
+.modal-card { background: #111; padding: 25px; border-radius: 20px; width: 380px; border: 1px solid #333; overflow-y: auto; max-height: 90vh; }
 .abas-gestao { display: flex; gap: 5px; margin-bottom: 15px; }
 .aba-btn { flex: 1; padding: 12px; background: #222; border: none; color: #888; cursor: pointer; border-radius: 8px; }
 .aba-btn.ativa { background: var(--verde); color: black; font-weight: bold; }
-.grade-form input { width: 100%; padding: 12px; margin-bottom: 10px; background: #000; border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; }
+.grade-form input { width: 100%; padding: 10px; margin-bottom: 8px; background: #000; border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; }
 .btn-salvar-prod { width: 100%; background: var(--verde); color: black; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
 .btn-cancelar-prod { width: 100%; background: #333; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; margin-top: 10px; }
 .btn-config-flutuante { position: fixed; bottom: 20px; right: 20px; background: #000; color: var(--verde); border: 1px solid var(--verde); padding: 15px 25px; border-radius: 50px; cursor: pointer; font-weight: bold; z-index: 1000; }
