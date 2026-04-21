@@ -1,14 +1,15 @@
 :root { --verde: #1fcc7d; --vermelho: #ff5e5e; --laranja: #ffa500; --bg: #0a0a0a; }
 body { margin: 0; background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
 .pdv-layout { display: grid; grid-template-columns: 1fr 400px; height: 100vh; padding: 10px; gap: 10px; box-sizing: border-box; }
-.area-cupom { background: white; color: #333; border-radius: 15px; padding: 30px; display: flex; flex-direction: column; overflow: hidden; }
+.area-cupom { background: white; color: #333; border-radius: 15px; padding: 25px; display: flex; flex-direction: column; overflow: hidden; }
 .cabecalho-loja { text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 10px; }
-.cabecalho-loja h1 { margin: 0; color: #000; font-size: 32px; }
-.tabela-venda { flex-grow: 1; overflow-y: auto; margin-top: 20px; }
+.cabecalho-loja h1 { margin: 0; color: #000; font-size: 28px; }
+.tabela-venda { flex-grow: 1; overflow-y: auto; margin-top: 15px; }
 table { width: 100%; border-collapse: collapse; }
-td { padding: 12px 10px; border-bottom: 1px solid #f2f2f2; font-weight: bold; font-size: 18px; }
+td { padding: 10px 5px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 16px; vertical-align: middle; }
+.img-tabela { width: 40px; height: 40px; object-fit: cover; border-radius: 5px; background: #eee; }
 .painel-total { background: #000; color: var(--verde); padding: 15px; border-radius: 12px; text-align: right; margin-top: 10px; }
-.painel-total span { font-size: 60px; font-weight: 900; }
+.painel-total span { font-size: 50px; font-weight: 900; }
 .area-comandos { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; display: flex; flex-direction: column; gap: 8px; border: 1px solid rgba(255,255,255,0.1); }
 .titulo-secao { font-size: 10px; color: var(--verde); font-weight: bold; margin-bottom: 5px; }
 .grade-atalhos { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
@@ -18,30 +19,24 @@ td { padding: 12px 10px; border-bottom: 1px solid #f2f2f2; font-weight: bold; fo
 .grade-pagamento { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
 .btn-pg { background: #222; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
 .btn-pg.ativo { background: var(--verde); color: black; box-shadow: 0 0 15px var(--verde); }
-.btn-pendura { border-left: 4px solid var(--vermelho); }
-.btn-finalizar { background: var(--verde); color: black; font-size: 20px; font-weight: bold; padding: 18px; border: none; border-radius: 12px; cursor: pointer; margin-top: 5px; }
+.btn-finalizar { background: var(--verde); color: black; font-size: 18px; font-weight: bold; padding: 18px; border: none; border-radius: 12px; cursor: pointer; }
 .grade-dados { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
 .btn-dados { padding: 8px; background: #111; color: #888; border: 1px solid #333; border-radius: 8px; font-size: 10px; cursor: pointer; text-align: center; }
-.scroll-especial { max-height: 70px; overflow-y: auto; }
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 100; }
-.modal-card { background: #111; padding: 25px; border-radius: 20px; width: 360px; border: 1px solid #333; }
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 9999; }
+.modal-card { background: #111; padding: 25px; border-radius: 20px; width: 380px; border: 1px solid #333; }
 .abas-gestao { display: flex; gap: 5px; margin-bottom: 15px; }
-.aba-btn { flex: 1; padding: 10px; background: #222; border: none; color: #888; cursor: pointer; border-radius: 5px; }
+.aba-btn { flex: 1; padding: 12px; background: #222; border: none; color: #888; cursor: pointer; border-radius: 8px; }
 .aba-btn.ativa { background: var(--verde); color: black; font-weight: bold; }
-.resumo-caixa { background: #000; padding: 15px; border-radius: 10px; border: 1px solid #333; }
-.resumo-caixa p { margin: 5px 0; font-size: 14px; display: flex; justify-content: space-between; }
-.btn-salvar-prod { width: 100%; background: var(--verde); color: black; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+.grade-form input { width: 100%; padding: 12px; margin-bottom: 10px; background: #000; border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; }
+.btn-salvar-prod { width: 100%; background: var(--verde); color: black; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
 .btn-cancelar-prod { width: 100%; background: #333; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; margin-top: 10px; }
-.btn-config-flutuante { position: fixed; bottom: 20px; right: 20px; background: #000; color: var(--verde); border: 1px solid var(--verde); padding: 10px 20px; border-radius: 50px; cursor: pointer; }
+.btn-config-flutuante { position: fixed; bottom: 20px; right: 20px; background: #000; color: var(--verde); border: 1px solid var(--verde); padding: 15px 25px; border-radius: 50px; cursor: pointer; font-weight: bold; z-index: 1000; }
+.resumo-caixa { background: #000; padding: 15px; border-radius: 12px; border: 1px solid #333; }
+.resumo-caixa p { display: flex; justify-content: space-between; margin: 8px 0; font-size: 14px; }
 
-/* CONFIG IMPRESSÃO 50mm */
 @media print {
     body * { visibility: hidden; }
     .area-cupom, .area-cupom * { visibility: visible; }
-    .area-cupom { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; border: none; }
-    .area-comandos, .btn-config-flutuante, .modal-overlay { display: none !important; }
-    .cabecalho-loja h1 { font-size: 18px; }
-    td { font-size: 12px; padding: 5px 0; border-bottom: 1px dashed #ccc; }
-    .painel-total { background: none; color: black; border-top: 1px solid #000; padding: 5px 0; }
-    .painel-total span { font-size: 22px; }
+    .area-cupom { position: absolute; left: 0; top: 0; width: 100%; padding: 0; border: none; }
+    .img-tabela, .area-comandos, .btn-config-flutuante, .modal-overlay { display: none !important; }
 }
