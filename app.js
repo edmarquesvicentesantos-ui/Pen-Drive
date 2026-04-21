@@ -132,3 +132,20 @@ window.exportarEstoque = async () => {
     const dados = []; snap.forEach(doc => dados.push(doc.data()));
     const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(dados, null, 2)], {type:"application/json"})); a.download=`backup_934.json`; a.click();
 };
+// ... (resto do código de gravar venda igual ao anterior)
+
+        await addDoc(collection(db, "vendas"), { 
+            cliente: cliente, 
+            pagamento: pag, 
+            total: Number(total), 
+            data: new Date() 
+        });
+
+        // DISPARA A IMPRESSÃO
+        window.print(); 
+
+        alert("VENDA CONCLUÍDA E RECIBO ENVIADO! 🍻");
+        
+        carrinho = []; 
+        renderizar();
+        document.getElementById('identificacaoCliente').value = "";
