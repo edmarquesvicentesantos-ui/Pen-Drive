@@ -38,22 +38,63 @@ td { padding: 12px 10px; border-bottom: 1px solid #f9f9f9; font-weight: bold; fo
 .btn-config-flutuante { position: fixed; bottom: 20px; right: 20px; background: #000; color: var(--verde); border: 1px solid var(--verde); padding: 10px 20px; border-radius: 50px; cursor: pointer; }
 .grade-form input, .grade-form select { width: 100%; padding: 12px; margin-bottom: 10px; background: #000; border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; }
 /* AJUSTE PARA IMPRESSORA TÉRMICA 50mm/58mm */
+/* CONFIGURAÇÃO EXCLUSIVA PARA IMPRESSÃO TÉRMICA 50mm */
 @media print {
-    /* Esconde tudo que não é o cupom */
-    body * { visibility: hidden; }
-    .area-cupom, .area-cupom * { visibility: visible; }
-    
-    /* Posiciona o cupom no topo da página de impressão */
+    /* 1. Esconde absolutamente tudo na página */
+    body * { 
+        visibility: hidden; 
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* 2. Faz aparecer APENAS a área do cupom branco */
+    .area-cupom, .area-cupom * { 
+        visibility: visible; 
+    }
+
+    /* 3. Ajusta o cupom para ocupar o papel de 50mm sem margens */
     .area-cupom {
         position: absolute;
         left: 0;
         top: 0;
-        width: 100%; /* Ocupa a largura da bobina */
-        padding: 0;
-        margin: 0;
-        box-shadow: none;
+        width: 100vw; /* Força a largura total do papel */
+        background: white !important;
+        color: black !important;
     }
 
+    /* 4. Ajusta os textos para ficarem legíveis na térmica */
+    .cabecalho-loja h1 { 
+        font-size: 16px !important; 
+        margin-bottom: 2px !important;
+    }
+    
+    .cabecalho-loja p { font-size: 10px !important; }
+
+    table { width: 100% !important; }
+    
+    td { 
+        font-size: 12px !important; 
+        padding: 4px 0 !important;
+        border-bottom: 1px dashed #ccc !important;
+    }
+
+    .painel-total { 
+        background: none !important; 
+        color: black !important; 
+        border-top: 2px solid black !important;
+        text-align: right !important;
+        padding: 10px 0 !important;
+    }
+
+    .painel-total span { 
+        font-size: 24px !important; 
+    }
+
+    /* 5. Esconde os botões de configuração e áreas laterais */
+    .area-comandos, .btn-config-flutuante, .modal-overlay, .grade-dados { 
+        display: none !important; 
+    }
+}
     /* Ajusta fontes para o tamanho pequeno da térmica */
     .cabecalho-loja h1 { font-size: 18px; }
     td { font-size: 14px; padding: 5px 0; }
