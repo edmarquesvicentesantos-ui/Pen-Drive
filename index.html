@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boteco 934 | PDV Inteligente</title>
+    <title>Boteco 934 | PDV e Gestão</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
@@ -11,15 +11,14 @@
         <main class="area-cupom">
             <div class="cabecalho-loja">
                 <h1>BOTECO 934</h1>
-                <p>PETROLINA - PE</p>
-                <p id="data-cupom"></p>
+                <p>GESTÃO DE VENDAS E LUCRO</p>
             </div>
             <div class="tabela-venda">
                 <table>
                     <thead>
                         <tr>
                             <th>FOTO</th>
-                            <th>ITEM</th>
+                            <th>PRODUTO</th>
                             <th>QTD</th>
                             <th style="text-align:right">TOTAL</th>
                         </tr>
@@ -34,129 +33,45 @@
         </main>
 
         <aside class="area-comandos">
-            <div class="secao">
-                <p class="titulo-secao">ATALHOS ⚡</p>
-                <div class="grade-atalhos">
-                    <button class="btn-atalho" onclick="adicionarPorNome('HEINEKEN LATA')">🍺 HEINEKEN</button>
-                    <button class="btn-atalho" onclick="adicionarPorNome('DOSE OLD PARR')">🥃 OLD PARR</button>
-                    <button class="btn-atalho" onclick="adicionarPorNome('AGUA MINERAL')">💧 ÁGUA</button>
-                    <button class="btn-atalho" onclick="adicionarPorNome('COCA COLA')">🥤 COCA</button>
-                </div>
-            </div>
+            <p class="titulo-secao">CÓDIGO DE BARRAS</p>
+            <input type="text" id="biparVenda" placeholder="Bipe aqui..." autofocus>
+            
+            <p class="titulo-secao">PAGAMENTO</p>
+            <select id="metodoPagamento" class="input-moderno">
+                <option value="Pix">PIX</option>
+                <option value="Dinheiro">DINHEIRO</option>
+                <option value="Cartão">CARTÃO</option>
+                <option value="Pendura">PENDURA (FIADO)</option>
+            </select>
 
-            <div class="campo-bip">
-                <input type="text" id="biparVenda" placeholder="BIPE O CÓDIGO..." autofocus>
-            </div>
-
-            <div class="secao">
-                <p class="titulo-secao">CLIENTE / MESA</p>
-                <input type="text" id="identificacaoCliente" class="input-moderno" placeholder="QUEM ESTÁ PAGANDO?" list="lista-clientes-sugestao">
-                <datalist id="lista-clientes-sugestao"></datalist>
-            </div>
-
-            <div class="secao">
-                <p class="titulo-secao">PAGAMENTO</p>
-                <div class="grade-pagamento">
-                    <button class="btn-pg ativo" onclick="escolherPag('Pix', this)">PIX</button>
-                    <button class="btn-pg" onclick="escolherPag('Dinheiro', this)">DINHEIRO</button>
-                    <button class="btn-pg" onclick="escolherPag('Cartão', this)">CARTÃO</button>
-                    <button class="btn-pg btn-pendura" onclick="escolherPag('Pendura', this)">PENDURA</button>
-                </div>
-                <input type="hidden" id="metodoPagamento" value="Pix">
-            </div>
-
-            <button class="btn-finalizar" onclick="finalizarVenda()">CONCLUIR E IMPRIMIR 🍻</button>
-
-            <div class="grade-dados">
-                <button class="btn-dados" onclick="exportarEstoque()">📤 BACKUP</button>
-                <label class="btn-dados">📥 IMPORTAR <input type="file" id="arquivoImportar" style="display:none" onchange="importarEstoque(event)"></label>
-            </div>
+            <button class="btn-finalizar" onclick="finalizarVenda()">CONCLUIR VENDA 🍻</button>
         </aside>
-    </div>
-
-    <!-- MODAL DE GESTÃO COM CALCULADORA DE CAIXA -->
-    <div id="modalCadastro" class="modal-overlay">
-        <div class="modal-card">
-            <div class="abas-gestao">
-                <button id="btn-aba-prod" class="aba-btn ativa" onclick="mudarAba('produtos')">PRODUTOS</button>
-                <button id="btn-aba-fin" class="aba-btn" onclick="mudarAba('contas')">LUCRO REAL</button>
-            </div>
-
-            <div id="aba-produtos" class="aba-conteudo">
-                <h2>CADASTRO INTELIGENTE</h2>
-                <div class="grade-form">
-                    <input type="text" id="cadCodigo" placeholder="Código de Barras">
-                    <input type="text" id="cadNome" placeholder="Nome do Produto">
-                    <input type="text" id="cadFoto" placeholder="URL da Foto">
-                    
-                    <p class="titulo-secao" style="margin-top:10px">CALCULADORA DE CUSTO (FARDO/CAIXA)</p>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #1a1a1a; padding: 10px; border-radius: 8px;">
-                        <div>
-                            <label style="font-size: 10px; color: #888;">Preço da Caixa</label>
-                            <input type="number" step="0.01" id="calcPrecoCaixa" placeholder="Ex: 50.00" oninput="calcularCustoUnitario()">
-                        </div>
-                        <div>
-                            <label style="font-size: 10px; color: #888;">Qtd na Caixa</label>
-                            <input type="number" id="calcQtdCaixa" placeholder="Ex: 12" oninput="calcularCustoUnitario()">
-                        </div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-                        <div>
-                            <label style="font-size: 10px; color: var(--verde);">Custo Unitário (R$)</label>
-                            <input type="number" step="0.01" id="cadCustoUn" placeholder="0.00" readonly style="background: #222; border-color: var(--verde);">
-                        </div>
-                        <div>
-                            <label style="font-size: 10px; color: #888;">Venda Unitária (R$)</label>
-                            <input type="number" step="0.01" id="cadPreco" placeholder="0.00">
-                        </div>
-                    </div>
-                    
-                    <input type="number" id="cadEstoque" placeholder="Qtd Inicial em Estoque">
-                </div>
-                <button class="btn-salvar-prod" onclick="salvarNovoProduto()">SALVAR NO ESTOQUE ✅</button>
-            </div>
-
-            <div id="aba-contas" class="aba-conteudo" style="display:none">
-                <h2>DINHEIRO NO BOLSO</h2>
-                <div class="resumo-caixa">
-                    <p>Faturamento: <span id="resumo-vendas">R$ 0,00</span></p>
-                    <p>Custo Mercadoria: <span id="resumo-custo-total">R$ 0,00</span></p>
-                    <p>Despesas: <span id="resumo-despesas">R$ 0,00</span></p>
-                    <hr>
-                    <p><strong>LUCRO REAL: <span id="resumo-saldo">R$ 0,00</span></strong></p>
-                </div>
-                <div class="grade-form" style="margin-top:15px">
-                    <input type="text" id="finDescricao" placeholder="Descrição da Despesa">
-                    <input type="number" step="0.01" id="finValor" placeholder="Valor R$">
-                    <button class="btn-salvar-prod" style="background:#e67e22" onclick="salvarFinanceiro()">LANÇAR CONTA 💰</button>
-                </div>
-            </div>
-
-            <button class="btn-cancelar-prod" onclick="fecharModal()">FECHAR</button>
-        </div>
     </div>
 
     <button class="btn-config-flutuante" onclick="abrirModal()">⚙️ GESTÃO</button>
 
+    <div id="modalCadastro" class="modal-overlay">
+        <div class="modal-card">
+            <h2>CADASTRAR PRODUTO</h2>
+            <div class="grade-form">
+                <input type="text" id="cadCodigo" placeholder="Código de Barras">
+                <input type="text" id="cadNome" placeholder="Nome do Produto">
+                <input type="text" id="cadFoto" placeholder="Link da Foto">
+                
+                <p style="font-size:11px; color:var(--verde); margin-bottom:5px;">CALCULADORA DE FARDO</p>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <input type="number" id="calcPrecoCaixa" placeholder="Preço do Fardo" oninput="calcularCusto()">
+                    <input type="number" id="calcQtdCaixa" placeholder="Qtd no Fardo" oninput="calcularCusto()">
+                </div>
+                
+                <input type="number" id="cadCustoUn" placeholder="Custo Unitário" readonly style="background:#222">
+                <input type="number" id="cadPreco" placeholder="Preço de Venda Unitário">
+            </div>
+            <button class="btn-salvar-prod" onclick="salvarNovoProduto()">SALVAR NO FIREBASE ✅</button>
+            <button class="btn-cancelar-prod" onclick="fecharModal()">CANCELAR</button>
+        </div>
+    </div>
+
     <script type="module" src="app.js"></script>
-    <script>
-        window.escolherPag = (metodo, btn) => {
-            document.getElementById('metodoPagamento').value = metodo;
-            document.querySelectorAll('.btn-pg').forEach(b => b.classList.remove('ativo'));
-            btn.classList.add('ativo');
-        };
-        
-        window.calcularCustoUnitario = () => {
-            const precoCaixa = parseFloat(document.getElementById('calcPrecoCaixa').value) || 0;
-            const qtdCaixa = parseFloat(document.getElementById('calcQtdCaixa').value) || 0;
-            if (qtdCaixa > 0) {
-                const unitario = precoCaixa / qtdCaixa;
-                document.getElementById('cadCustoUn').value = unitario.toFixed(2);
-            }
-        };
-    </script>
 </body>
 </html>
-index.html
-Exibindo index.html.
