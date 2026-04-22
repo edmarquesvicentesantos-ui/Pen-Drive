@@ -14,23 +14,13 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 let carrinho = [];
 
-// --- FUNÇÕES DE INTERFACE (AGORA LIGADAS AO WINDOW PARA O BOTÃO FUNCIONAR) ---
-
-window.abrirModal = () => {
-    console.log("Abrindo modal...");
-    document.getElementById('modalCadastro').style.display = 'flex';
-};
-
-window.fecharModal = () => {
-    document.getElementById('modalCadastro').style.display = 'none';
-};
+window.abrirModal = () => document.getElementById('modalCadastro').style.display = 'flex';
+window.fecharModal = () => document.getElementById('modalCadastro').style.display = 'none';
 
 window.calcular = () => {
     const p = parseFloat(document.getElementById('calcPreco').value) || 0;
     const q = parseFloat(document.getElementById('calcQtd').value) || 0;
-    if(q > 0) {
-        document.getElementById('cadCustoUn').value = (p/q).toFixed(2);
-    }
+    if(q > 0) document.getElementById('cadCustoUn').value = (p/q).toFixed(2);
 };
 
 window.salvarNovoProduto = async () => {
@@ -44,29 +34,32 @@ window.salvarNovoProduto = async () => {
     };
     try {
         await addDoc(collection(db, "estoque"), prod);
-        alert("✅ Produto salvo no Boteco 934!");
+        alert("✅ Produto cadastrado!");
         window.fecharModal();
         window.carregar('TUDO');
-    } catch (e) {
-        alert("Erro ao salvar: " + e);
-    }
+    } catch (e) { alert("Erro: " + e); }
 };
 
 window.carregar = async (cat) => {
     const vitrine = document.getElementById('vitrine-produtos');
     const snap = await getDocs(collection(db, "estoque"));
-    vitrine.innerHTML = "";
+    let lista = [];
+    
     snap.forEach(doc => {
         const p = doc.data();
-        if(cat === 'TUDO' || p.categoria === cat) {
-            vitrine.innerHTML += `
-                <div class="card-vitrine" onclick="window.add('${p.codigo}')">
-                    <img src="${p.foto}" class="img-vitrine" onerror="this.src='https://via.placeholder.com/60'">
-                    <div style="font-size:9px; color:#fff; font-weight:bold">${p.nome}</div>
-                    <div style="font-size:10px; color:#1fcc7d">R$ ${p.precoVenda.toFixed(2)}</div>
-                </div>`;
-        }
+        if(cat === 'TUDO' || p.categoria === cat) lista.push(p);
     });
+
+    // Ordenação A-Z
+    lista.sort((a, b) => a.nome.localeCompare(b.nome));
+
+    vitrine.innerHTML = lista.map(p => `
+        <div class="card-vitrine" onclick="window.add('${p.codigo}')">
+            <img src="${p.foto}" class="img-vitrine" onerror="this.src='https://via.placeholder.com/60'">
+            <div style="font-size:9px; color:#fff; font-weight:bold; text-transform:uppercase">${p.nome}</div>
+            <div style="font-size:10px; color:#1fcc7d">R$ ${p.precoVenda.toFixed(2)}</div>
+        </div>
+    `).join('');
 };
 
 window.filtrar = (cat, btn) => {
@@ -81,14 +74,11 @@ window.add = async (cod) => {
     if(!snap.empty) {
         carrinho.push(snap.docs[0].data());
         render();
-    } else {
-        console.log("Produto não encontrado: " + cod);
     }
 };
 
 function render() {
-    const corpo = document.getElementById('corpo-carrinho');
-    corpo.innerHTML = carrinho.map(i => `
+    document.getElementById('corpo-carrinho').innerHTML = carrinho.map(i => `
         <tr>
             <td><img src="${i.foto}" class="img-tabela"></td>
             <td>${i.nome}</td>
@@ -106,11 +96,10 @@ document.getElementById('biparVenda').addEventListener('change', (e) => {
 });
 
 window.finalizarVenda = () => {
-    if(carrinho.length === 0) return alert("Carrinho vazio!");
+    if(carrinho.length === 0) return;
     window.print();
     carrinho = [];
     render();
 };
 
-// Carregar catálogo ao abrir
 window.onload = () => window.carregar('TUDO');
