@@ -43,7 +43,36 @@
                 <option value="Cartão">CARTÃO</option>
                 <option value="Pendura">PENDURA (FIADO)</option>
             </select>
+    <aside class="area-comandos">
+    <p class="titulo-secao">CÓDIGO DE BARRAS</p>
+    <input type="text" id="biparVenda" placeholder="Bipe aqui..." autofocus>
+    
+    <p class="titulo-secao">PAGAMENTO</p>
+    <select id="metodoPagamento" class="input-moderno">
+        <option value="Pix">PIX</option>
+        <option value="Dinheiro">DINHEIRO</option>
+        <option value="Cartão">CARTÃO</option>
+        <option value="Pendura">PENDURA</option>
+    </select>
 
+    <button class="btn-finalizar" onclick="finalizarVenda()">CONCLUIR VENDA 🍻</button>
+
+    <div class="menu-cortina">
+        <button class="btn-cortina-trigger" onclick="toggleCategorias()">📦 PRODUTOS RÁPIDOS (CATEGORIAS) ▼</button>
+        <div id="lista-categorias" class="cortina-conteudo">
+            <p class="titulo-secao">BEBIDAS</p>
+            <div class="grade-atalhos">
+                <button onclick="adicionarPorNome('HEINEKEN LATA')">Heineken</button>
+                <button onclick="adicionarPorNome('COCA COLA')">Coca Cola</button>
+            </div>
+            <p class="titulo-secao">BOTICÁRIO</p>
+            <div class="grade-atalhos">
+                <button onclick="adicionarPorNome('PERFUME MALBEC')">Malbec</button>
+                <button onclick="adicionarPorNome('HIDRATANTE')">Hidratante</button>
+            </div>
+        </div>
+    </div>
+</aside>
             <button class="btn-finalizar" onclick="finalizarVenda()">CONCLUIR VENDA 🍻</button>
         </aside>
     </div>
