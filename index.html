@@ -1,109 +1,28 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boteco 934 | PDV Pro</title>
-    <link rel="stylesheet" href="estilo.css">
-</head>
-<body>
-    <div class="pdv-layout">
-        <main class="area-cupom">
-            <div class="cabecalho-loja">
-                <h1>BOTECO 934</h1>
-                <p>PETROLINA - PE</p>
-            </div>
-            <div class="tabela-venda">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>FOTO</th>
-                            <th>PRODUTO</th>
-                            <th style="text-align:center">QTD</th>
-                            <th style="text-align:right">TOTAL</th>
-                        </tr>
-                    </thead>
-                    <tbody id="corpo-carrinho"></tbody>
-                </table>
-            </div>
-            <div class="painel-total">
-                <div style="font-size: 14px; font-weight: bold;">TOTAL A PAGAR</div>
-                R$ <span id="total-venda-valor">0,00</span>
-            </div>
-        </main>
-
-        <aside class="area-comandos">
-            <div class="card-comando">
-                <p class="titulo-secao">ENTRADA DE PRODUTO</p>
-                <input type="text" id="biparVenda" placeholder="Bipe o código..." autofocus>
-            </div>
-
-            <div class="card-comando">
-                <p class="titulo-secao">FORMA DE PAGAMENTO</p>
-                <select id="metodoPagamento" class="input-moderno">
-                    <option value="Pix">📱 PIX</option>
-                    <option value="Dinheiro">💵 DINHEIRO</option>
-                    <option value="Cartão">💳 CARTÃO</option>
-                    <option value="Pendura">📝 PENDURA (FIADO)</option>
-                </select>
-            </div>
-
-            <button class="btn-finalizar" onclick="finalizarVenda()">CONCLUIR VENDA 🍻</button>
-
-            <div class="menu-cortina">
-                <button class="btn-cortina-trigger" onclick="toggleCategorias()">
-                    CATÁLOGO RÁPIDO <span id="seta-cortina">▼</span>
-                </button>
-                <div id="lista-categorias" class="cortina-conteudo">
-                    <div class="secao-cat">
-                        <p class="label-cat">🍺 BEBIDAS</p>
-                        <div class="grade-atalhos">
-                            <button onclick="adicionarPorNome('HEINEKEN LATA')">HEINEKEN</button>
-                            <button onclick="adicionarPorNome('COCA COLA')">COCA COLA</button>
-                            <button onclick="adicionarPorNome('AGUA')">ÁGUA</button>
-                        </div>
-                    </div>
-                    <div class="secao-cat">
-                        <p class="label-cat">🧴 BOTICÁRIO</p>
-                        <div class="grade-atalhos">
-                            <button onclick="adicionarPorNome('MALBEC')">MALBEC</button>
-                            <button onclick="adicionarPorNome('LILY')">LILY</button>
-                            <button onclick="adicionarPorNome('NATIVA SPA')">NATIVA SPA</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </aside>
+<aside class="area-comandos">
+    <div class="card-comando">
+        <p class="titulo-secao">ENTRADA</p>
+        <input type="text" id="biparVenda" placeholder="Bipe o código..." autofocus>
     </div>
 
-    <button class="btn-config-flutuante" onclick="abrirModal()">⚙️</button>
+    <div class="card-comando">
+        <p class="titulo-secao">PAGAMENTO</p>
+        <select id="metodoPagamento" class="input-moderno">
+            <option value="Pix">📱 PIX</option>
+            <option value="Dinheiro">💵 DINHEIRO</option>
+            <option value="Cartão">💳 CARTÃO</option>
+            <option value="Pendura">📝 PENDURA</option>
+        </select>
+    </div>
 
-    <div id="modalCadastro" class="modal-overlay">
-        <div class="modal-card">
-            <h3>NOVO PRODUTO</h3>
-            <div class="grade-form">
-                <input type="text" id="cadCodigo" placeholder="Código de Barras">
-                <input type="text" id="cadNome" placeholder="Nome Completo">
-                <input type="text" id="cadFoto" placeholder="Link da Foto (URL)">
-                
-                <div class="calculadora-box">
-                    <p>Calculadora de Custo (Fardo)</p>
-                    <div style="display:flex; gap:5px;">
-                        <input type="number" id="calcPrecoCaixa" placeholder="Preço Total" oninput="calcularCusto()">
-                        <input type="number" id="calcQtdCaixa" placeholder="Qtd Itens" oninput="calcularCusto()">
-                    </div>
-                </div>
+    <button class="btn-finalizar" onclick="finalizarVenda()">CONCLUIR VENDA 🍻</button>
 
-                <div style="display:flex; gap:5px;">
-                    <input type="number" id="cadCustoUn" placeholder="Custo Un." readonly>
-                    <input type="number" id="cadPreco" placeholder="Venda Un.">
+    <div class="menu-cortina">
+        <button class="btn-cortina-trigger" onclick="toggleCategorias()">
+            📖 VER CATÁLOGO COMPLETO <span id="seta-cortina">▼</span>
+        </button>
+        <div id="lista-categorias" class="cortina-conteudo">
+            <div id="vitrine-produtos" class="vitrine-grid">
                 </div>
-            </div>
-            <button class="btn-salvar-prod" onclick="salvarNovoProduto()">SALVAR PRODUTO</button>
-            <button class="btn-cancelar-prod" onclick="fecharModal()">FECHAR</button>
         </div>
     </div>
-
-    <script type="module" src="app.js"></script>
-</body>
-</html>
+</aside>
