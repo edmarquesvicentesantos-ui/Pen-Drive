@@ -18,3 +18,51 @@ td { padding: 10px 5px; border-bottom: 1px solid #eee; font-weight: bold; }
 .btn-config-flutuante { position: fixed; bottom: 20px; right: 20px; background: #000; color: var(--verde); border: 1px solid var(--verde); padding: 15px; border-radius: 50%; cursor: pointer; font-size: 20px; }
 .btn-salvar-prod { width: 100%; background: var(--verde); padding: 15px; border: none; font-weight: bold; cursor: pointer; border-radius: 8px; }
 .btn-cancelar-prod { width: 100%; background: #333; color: #fff; border: none; padding: 10px; margin-top: 5px; cursor: pointer; border-radius: 8px; }
+.menu-cortina {
+    margin-top: 10px;
+    background: #1a1a1a;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.btn-cortina-trigger {
+    width: 100%;
+    padding: 12px;
+    background: #222;
+    color: var(--verde);
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.cortina-conteudo {
+    display: none; /* Começa escondido */
+    padding: 10px;
+    background: #111;
+    border-top: 1px solid #333;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.grade-atalhos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.grade-atalhos button {
+    background: #333;
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: 5px;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.grade-atalhos button:hover {
+    background: var(--verde);
+    color: black;
+}
