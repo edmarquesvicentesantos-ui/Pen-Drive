@@ -17,6 +17,18 @@ let carrinho = [];
 window.abrirModal = () => document.getElementById('modalCadastro').style.display = 'flex';
 window.fecharModal = () => document.getElementById('modalCadastro').style.display = 'none';
 
+window.toggleCategorias = () => {
+    const lista = document.getElementById('lista-categorias');
+    const seta = document.getElementById('seta-cortina');
+    if (lista.style.display === "block") {
+        lista.style.display = "none";
+        seta.innerText = "▼";
+    } else {
+        lista.style.display = "block";
+        seta.innerText = "▲";
+    }
+};
+
 window.calcularCusto = () => {
     const preco = parseFloat(document.getElementById('calcPrecoCaixa').value) || 0;
     const qtd = parseFloat(document.getElementById('calcQtdCaixa').value) || 0;
@@ -28,23 +40,34 @@ window.salvarNovoProduto = async () => {
         codigo: document.getElementById('cadCodigo').value,
         nome: document.getElementById('cadNome').value.toUpperCase(),
         foto: document.getElementById('cadFoto').value,
-        custoUn: parseFloat(document.getElementById('cadCustoUn').value),
-        precoVenda: parseFloat(document.getElementById('cadPreco').value)
+        custoUn: parseFloat(document.getElementById('cadCustoUn').value) || 0,
+        precoVenda: parseFloat(document.getElementById('cadPreco').value) || 0
     };
     await addDoc(collection(db, "estoque"), p);
-    alert("Produto Salvo!");
+    alert("🚀 Produto salvo com sucesso!");
     fecharModal();
 };
 
-async function adicionarAoCarrinho(codigo) {
-    const q = query(collection(db, "estoque"), where("codigo", "==", codigo));
+window.adicionarPorNome = async (nome) => {
+    const q = query(collection(db, "estoque"), where("nome", "==", nome.toUpperCase()));
     const snap = await getDocs(q);
     if (!snap.empty) {
         const p = snap.docs[0].data();
-        carrinho.push({ ...p, subtotal: p.precoVenda });
+        carrinho.push({ ...p });
         renderizar();
     } else {
-        alert("Produto não cadastrado!");
+        alert("Ops! Produto não cadastrado com este nome exato.");
+    }
+};
+
+async function buscarPorCodigo(codigo) {
+    const q = query(collection(db, "estoque"), where("codigo", "==", codigo));
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+        carrinho.push(snap.docs[0].data());
+        renderizar();
+    } else {
+        alert("Código não encontrado!");
     }
 }
 
@@ -52,9 +75,9 @@ function renderizar() {
     const corpo = document.getElementById('corpo-carrinho');
     corpo.innerHTML = carrinho.map(i => `
         <tr>
-            <td><img src="${i.foto}" class="img-tabela"></td>
+            <td><img src="${i.foto}" class="img-tabela" onerror="this.src='https://via.placeholder.com/45'"></td>
             <td>${i.nome}</td>
-            <td>1x</td>
+            <td style="text-align:center">1</td>
             <td style="text-align:right">R$ ${i.precoVenda.toFixed(2)}</td>
         </tr>
     `).join('');
@@ -63,37 +86,13 @@ function renderizar() {
 }
 
 document.getElementById('biparVenda').addEventListener('change', (e) => {
-    adicionarAoCarrinho(e.target.value);
+    buscarPorCodigo(e.target.value);
     e.target.value = "";
 });
 
 window.finalizarVenda = () => {
-    if (carrinho.length > 0) {
-        window.print();
-        carrinho = [];
-        renderizar();
-        alert("Venda Concluída!");
-    }
-};
-// Função para abrir e fechar a cortina
-window.toggleCategorias = () => {
-    const lista = document.getElementById('lista-categorias');
-    if (lista.style.display === "block") {
-        lista.style.display = "none";
-    } else {
-        lista.style.display = "block";
-    }
-};
-
-// Função para adicionar produto clicando no botão (pelo nome)
-window.adicionarPorNome = async (nome) => {
-    const q = query(collection(db, "estoque"), where("nome", "==", nome));
-    const snap = await getDocs(q);
-    if (!snap.empty) {
-        const p = snap.docs[0].data();
-        carrinho.push({ ...p, subtotal: p.precoVenda });
-        renderizar();
-    } else {
-        alert("Produto não cadastrado com este nome exato!");
-    }
+    if (carrinho.length === 0) return alert("Carrinho vazio!");
+    window.print();
+    carrinho = [];
+    renderizar();
 };
