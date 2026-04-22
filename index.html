@@ -13,7 +13,37 @@
             <option value="Pendura">📝 PENDURA</option>
         </select>
     </div>
+<aside class="area-comandos">
+    <div class="card-comando">
+        <p class="titulo-secao">ENTRADA</p>
+        <input type="text" id="biparVenda" placeholder="Bipe o código..." autofocus>
+    </div>
 
+    <div class="card-comando">
+        <p class="titulo-secao">PAGAMENTO</p>
+        <select id="metodoPagamento" class="input-moderno">
+            <option value="Pix">📱 PIX</option>
+            <option value="Dinheiro">💵 DINHEIRO</option>
+            <option value="Cartão">💳 CARTÃO</option>
+            <option value="Pendura">📝 PENDURA</option>
+        </select>
+    </div>
+
+    <button class="btn-finalizar" onclick="finalizarVenda()">CONCLUIR VENDA 🍻</button>
+
+    <div class="container-categorias">
+        <p class="titulo-secao">CATÁLOGO POR CATEGORIA</p>
+        
+        <div class="filtro-abas">
+            <button class="aba-filtro ativa" onclick="filtrarCatalogo('TODOS')">TUDO</button>
+            <button class="aba-filtro" onclick="filtrarCatalogo('BEBIDAS')">BAR</button>
+            <button class="aba-filtro" onclick="filtrarCatalogo('BOTICARIO')">BOTICÁRIO</button>
+        </div>
+
+        <div id="vitrine-produtos" class="vitrine-scroll">
+            </div>
+    </div>
+</aside>
     <button class="btn-finalizar" onclick="finalizarVenda()">CONCLUIR VENDA 🍻</button>
 
     <div class="menu-cortina">
