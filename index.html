@@ -3,10 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boteco 934 | PDV</title>
-    <link rel="stylesheet" href="estilo.css">
+    <title>Boteco 934 | PDV Pro</title>
+    
+    <style>
+        :root { --verde: #1fcc7d; --bg: #0d0d0d; --card: #1a1a1a; --texto: #ffffff; }
+        body { margin: 0; background: var(--bg); color: var(--texto); font-family: sans-serif; overflow: hidden; }
+
+        .pdv-layout { display: grid; grid-template-columns: 1fr 380px; height: 100vh; padding: 15px; gap: 15px; box-sizing: border-box; }
+
+        /* Área Branca do Cupom */
+        .area-cupom { background: #fff; color: #333; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; overflow: hidden; }
+        .cabecalho-loja { text-align: center; border-bottom: 2px dashed #ddd; margin-bottom: 10px; }
+        .cabecalho-loja h1 { margin: 0; font-size: 24px; color: #000; }
+
+        .tabela-venda { flex-grow: 1; overflow-y: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        td { padding: 10px 5px; border-bottom: 1px solid #f0f0f0; font-weight: 600; font-size: 14px; }
+        .img-tabela { width: 40px; height: 40px; object-fit: cover; border-radius: 5px; }
+
+        .painel-total { background: #000; color: var(--verde); padding: 15px; border-radius: 15px; text-align: right; margin-top: 10px; }
+        .painel-total span { font-size: 40px; font-weight: 900; }
+
+        /* Área Lateral Direita */
+        .area-comandos { display: flex; flex-direction: column; gap: 10px; height: 100%; overflow: hidden; }
+        .card-comando { background: var(--card); padding: 12px; border-radius: 10px; border: 1px solid #333; }
+        .titulo-secao { font-size: 10px; font-weight: bold; color: var(--verde); margin-bottom: 5px; text-transform: uppercase; }
+
+        #biparVenda, .input-moderno { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        
+        .btn-finalizar { background: var(--verde); color: #000; border: none; padding: 18px; font-weight: bold; font-size: 18px; border-radius: 12px; cursor: pointer; }
+
+        /* Vitrine de Produtos */
+        .container-categorias { background: var(--card); border-radius: 10px; padding: 10px; border: 1px solid #333; flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .filtro-abas { display: flex; gap: 5px; margin-bottom: 10px; }
+        .aba-filtro { flex: 1; padding: 10px; background: #222; border: 1px solid #444; color: #fff; border-radius: 5px; cursor: pointer; font-size: 10px; font-weight: bold; }
+        .aba-filtro.ativa { background: var(--verde); color: #000; }
+        
+        .vitrine-scroll { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; overflow-y: auto; padding-right: 5px; }
+        .card-vitrine { background: #111; padding: 8px; border-radius: 8px; border: 1px solid #222; text-align: center; cursor: pointer; }
+        .img-vitrine { width: 100%; height: 60px; object-fit: cover; border-radius: 4px; margin-bottom: 5px; }
+
+        /* Botão de Gestão e Modais */
+        .btn-config-flutuante { position: fixed; bottom: 20px; right: 20px; background: #000; color: var(--verde); border: 1px solid var(--verde); width: 50px; height: 50px; border-radius: 50%; cursor: pointer; z-index: 100; font-size: 20px; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 2000; }
+        .modal-card { background: #111; padding: 25px; border-radius: 15px; width: 380px; border: 1px solid #333; }
+        .modal-card input { width: 100%; padding: 10px; margin-bottom: 10px; background: #000; border: 1px solid #444; color: #fff; border-radius: 5px; box-sizing: border-box; }
+        .btn-salvar-prod { width: 100%; background: var(--verde); border: none; padding: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; }
+    </style>
 </head>
 <body>
+
     <div class="pdv-layout">
         <main class="area-cupom">
             <div class="cabecalho-loja">
@@ -16,48 +62,48 @@
             <div class="tabela-venda">
                 <table>
                     <thead>
-                        <tr>
-                            <th>FOTO</th>
-                            <th>PRODUTO</th>
-                            <th style="text-align:center">QTD</th>
-                            <th style="text-align:right">TOTAL</th>
+                        <tr style="border-bottom: 1px solid #eee">
+                            <th align="left">FOTO</th>
+                            <th align="left">PRODUTO</th>
+                            <th align="center">QTD</th>
+                            <th align="right">TOTAL</th>
                         </tr>
                     </thead>
                     <tbody id="corpo-carrinho"></tbody>
                 </table>
             </div>
             <div class="painel-total">
-                <div style="font-size: 14px; font-weight: bold;">TOTAL A PAGAR</div>
+                <div style="font-size: 12px;">TOTAL A PAGAR</div>
                 R$ <span id="total-venda-valor">0,00</span>
             </div>
         </main>
 
         <aside class="area-comandos">
             <div class="card-comando">
-                <p class="titulo-secao">ENTRADA DE PRODUTO</p>
-                <input type="text" id="biparVenda" placeholder="Bipe o código..." autofocus>
+                <p class="titulo-secao">ENTRADA</p>
+                <input type="text" id="biparVenda" placeholder="Bipe aqui..." autofocus>
             </div>
 
             <div class="card-comando">
-                <p class="titulo-secao">FORMA DE PAGAMENTO</p>
+                <p class="titulo-secao">PAGAMENTO</p>
                 <select id="metodoPagamento" class="input-moderno">
-                    <option value="Pix">PIX</option>
-                    <option value="Dinheiro">DINHEIRO</option>
-                    <option value="Cartão">CARTÃO</option>
-                    <option value="Pendura">PENDURA</option>
+                    <option value="Pix">📱 PIX</option>
+                    <option value="Dinheiro">💵 DINHEIRO</option>
+                    <option value="Cartão">💳 CARTÃO</option>
+                    <option value="Pendura">📝 PENDURA</option>
                 </select>
             </div>
 
             <button class="btn-finalizar" onclick="finalizarVenda()">CONCLUIR VENDA 🍻</button>
 
             <div class="container-categorias">
-                <p class="titulo-secao">CATÁLOGO POR CATEGORIA</p>
                 <div class="filtro-abas">
                     <button class="aba-filtro ativa" onclick="filtrar('TUDO', this)">TUDO</button>
                     <button class="aba-filtro" onclick="filtrar('BEBIDAS', this)">BAR</button>
                     <button class="aba-filtro" onclick="filtrar('BOTICARIO', this)">BOTICÁRIO</button>
                 </div>
-                <div id="vitrine-produtos" class="vitrine-scroll"></div>
+                <div id="vitrine-produtos" class="vitrine-scroll">
+                    </div>
             </div>
         </aside>
     </div>
@@ -66,29 +112,35 @@
 
     <div id="modalCadastro" class="modal-overlay">
         <div class="modal-card">
-            <h3>NOVO PRODUTO</h3>
-            <div class="grade-form">
-                <input type="text" id="cadCodigo" placeholder="Código de Barras">
-                <input type="text" id="cadNome" placeholder="Nome">
-                <input type="text" id="cadFoto" placeholder="Link da Foto">
-                <select id="cadCategoria" class="input-moderno" style="margin-bottom:10px">
-                    <option value="BEBIDAS">BEBIDAS / BAR</option>
-                    <option value="BOTICARIO">BOTICÁRIO</option>
-                </select>
-                <div style="background:#000; padding:10px; border-radius:8px; border:1px solid #1fcc7d; margin-bottom:10px">
-                    <p style="font-size:10px; color:#1fcc7d; margin:0">Custo Fardo</p>
-                    <div style="display:flex; gap:5px">
-                        <input type="number" id="calcPreco" placeholder="R$" oninput="calcular()">
-                        <input type="number" id="calcQtd" placeholder="Qtd" oninput="calcular()">
-                    </div>
+            <h3 style="color:var(--verde); margin-top:0">NOVO PRODUTO</h3>
+            <input type="text" id="cadCodigo" placeholder="Código de Barras">
+            <input type="text" id="cadNome" placeholder="Nome do Produto">
+            <input type="text" id="cadFoto" placeholder="Link da Imagem (URL)">
+            
+            <p class="titulo-secao">CATEGORIA</p>
+            <select id="cadCategoria" class="input-moderno" style="margin-bottom:10px">
+                <option value="BEBIDAS">BAR / BEBIDAS</option>
+                <option value="BOTICARIO">BOTICÁRIO / COSMÉTICOS</option>
+            </select>
+
+            <div style="background:#000; padding:10px; border-radius:8px; border:1px solid var(--verde); margin-bottom:10px">
+                <p style="font-size:10px; color:var(--verde); margin:0 0 5px 0">CALCULADORA DE FARDO</p>
+                <div style="display:flex; gap:5px">
+                    <input type="number" id="calcPreco" placeholder="Preço Fardo" oninput="calcular()">
+                    <input type="number" id="calcQtd" placeholder="Qtd Itens" oninput="calcular()">
                 </div>
-                <input type="number" id="cadCustoUn" placeholder="Custo Un." readonly>
-                <input type="number" id="cadPreco" placeholder="Venda Un.">
             </div>
-            <button class="btn-salvar-prod" onclick="salvarNovoProduto()">SALVAR</button>
-            <button class="btn-cancelar-prod" onclick="fecharModal()">FECHAR</button>
+
+            <div style="display:flex; gap:5px">
+                <input type="number" id="cadCustoUn" placeholder="Custo Un." readonly style="background:#222">
+                <input type="number" id="cadPreco" placeholder="Preço Venda">
+            </div>
+
+            <button class="btn-salvar-prod" onclick="salvarNovoProduto()">SALVAR NO BANCO</button>
+            <button onclick="fecharModal()" style="width:100%; background:none; border:none; color:#888; margin-top:10px; cursor:pointer">CANCELAR</button>
         </div>
     </div>
+
     <script type="module" src="app.js"></script>
 </body>
 </html>
