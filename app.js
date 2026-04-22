@@ -75,3 +75,25 @@ window.finalizarVenda = () => {
         alert("Venda Concluída!");
     }
 };
+// Função para abrir e fechar a cortina
+window.toggleCategorias = () => {
+    const lista = document.getElementById('lista-categorias');
+    if (lista.style.display === "block") {
+        lista.style.display = "none";
+    } else {
+        lista.style.display = "block";
+    }
+};
+
+// Função para adicionar produto clicando no botão (pelo nome)
+window.adicionarPorNome = async (nome) => {
+    const q = query(collection(db, "estoque"), where("nome", "==", nome));
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+        const p = snap.docs[0].data();
+        carrinho.push({ ...p, subtotal: p.precoVenda });
+        renderizar();
+    } else {
+        alert("Produto não cadastrado com este nome exato!");
+    }
+};
