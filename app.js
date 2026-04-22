@@ -1,63 +1,81 @@
-// Função para carregar o catálogo automaticamente do Firebase
-async function carregarCatalogo() {
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAZf_RpFnTCS3DxqKIxpK7CEh5aTrLMEs4",
+    authDomain: "boteco934-afc3f.firebaseapp.com",
+    projectId: "boteco934-afc3f",
+    storageBucket: "boteco934-afc3f.appspot.com",
+    messagingSenderId: "182023728304",
+    appId: "1:182023728304:web:e716c52a0d91b192727ae6"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+let carrinho = [];
+
+window.abrirModal = () => document.getElementById('modalCadastro').style.display = 'flex';
+window.fecharModal = () => document.getElementById('modalCadastro').style.display = 'none';
+
+window.calcular = () => {
+    const p = parseFloat(document.getElementById('calcPreco').value) || 0;
+    const q = parseFloat(document.getElementById('calcQtd').value) || 0;
+    if(q > 0) document.getElementById('cadCustoUn').value = (p/q).toFixed(2);
+};
+
+window.salvarNovoProduto = async () => {
+    const prod = {
+        codigo: document.getElementById('cadCodigo').value,
+        nome: document.getElementById('cadNome').value.toUpperCase(),
+        foto: document.getElementById('cadFoto').value,
+        categoria: document.getElementById('cadCategoria').value,
+        custoUn: parseFloat(document.getElementById('cadCustoUn').value),
+        precoVenda: parseFloat(document.getElementById('cadPreco').value)
+    };
+    await addDoc(collection(db, "estoque"), prod);
+    alert("Salvo!"); fecharModal(); carregar('TUDO');
+};
+
+async function carregar(cat) {
     const vitrine = document.getElementById('vitrine-produtos');
     const snap = await getDocs(collection(db, "estoque"));
-    
-    vitrine.innerHTML = ""; // Limpa antes de carregar
-    
-    snap.forEach((doc) => {
+    vitrine.innerHTML = "";
+    snap.forEach(doc => {
         const p = doc.data();
-        vitrine.innerHTML += `
-            <div class="card-produto-catalogo" onclick="adicionarPorNome('${p.nome}')">
-                <img src="${p.foto}" class="img-catalogo" onerror="this.src='https://via.placeholder.com/80'">
-                <span class="nome-catalogo">${p.nome}</span>
-                <span class="preco-catalogo">R$ ${p.precoVenda.toFixed(2)}</span>
-            </div>
-        `;
+        if(cat === 'TUDO' || p.categoria === cat) {
+            vitrine.innerHTML += `
+                <div class="card-vitrine" onclick="add('${p.codigo}')">
+                    <img src="${p.foto}" class="img-vitrine" onerror="this.src='https://via.placeholder.com/60'">
+                    <div style="font-size:9px; color:#fff">${p.nome}</div>
+                    <div style="font-size:10px; color:#1fcc7d">R$ ${p.precoVenda.toFixed(2)}</div>
+                </div>`;
+        }
     });
 }
 
-// Atualiza o abrir/fechar para carregar os produtos quando abrir
-window.toggleCategorias = () => {
-    const lista = document.getElementById('lista-categorias');
-    if (lista.style.display === "block") {
-        lista.style.display = "none";
-    } else {
-        lista.style.display = "block";
-        carregarCatalogo(); // Busca os produtos no banco de dados
+window.filtrar = (cat, btn) => {
+    document.querySelectorAll('.aba-filtro').forEach(b => b.classList.remove('ativa'));
+    btn.classList.add('ativa');
+    carregar(cat);
+};
+
+window.add = async (cod) => {
+    const q = query(collection(db, "estoque"), where("codigo", "==", cod));
+    const snap = await getDocs(q);
+    if(!snap.empty) {
+        carrinho.push(snap.docs[0].data());
+        render();
     }
 };
-// Carrega os produtos assim que a página abre
-window.addEventListener('DOMContentLoaded', () => {
-    carregarCatalogo('TODOS');
-});
 
-window.carregarCatalogo = async (categoria) => {
-    const vitrine = document.getElementById('vitrine-produtos');
-    const snap = await getDocs(collection(db, "estoque"));
-    
-    vitrine.innerHTML = ""; 
-    
-    snap.forEach((doc) => {
-        const p = doc.data();
-        
-        // Verifica se o produto pertence à categoria ou se está em "TODOS"
-        // Para isso funcionar, cadastre o campo 'categoria' no modal de gestão
-        if (categoria === 'TODOS' || p.categoria === categoria) {
-            vitrine.innerHTML += `
-                <div class="card-produto-catalogo" onclick="adicionarPorNome('${p.nome}')">
-                    <img src="${p.foto}" class="img-catalogo" onerror="this.src='https://via.placeholder.com/60'">
-                    <div style="font-size:10px; margin-top:5px; color:#fff">${p.nome}</div>
-                    <div style="font-size:11px; color:var(--verde)">R$ ${p.precoVenda.toFixed(2)}</div>
-                </div>
-            `;
-        }
-    });
-};
+function render() {
+    document.getElementById('corpo-carrinho').innerHTML = carrinho.map(i => `
+        <tr><td><img src="${i.foto}" class="img-tabela"></td><td>${i.nome}</td><td style="text-align:center">1</td><td style="text-align:right">R$ ${i.precoVenda.toFixed(2)}</td></tr>
+    `).join('');
+    const total = carrinho.reduce((a, b) => a + b.precoVenda, 0);
+    document.getElementById('total-venda-valor').innerText = total.toFixed(2);
+}
 
-// Função para filtrar quando clicar nos botões BAR ou BOTICÁRIO
-window.filtrarCatalogo = (cat) => {
-    document.querySelectorAll('.aba-filtro').forEach(btn => btn.classList.remove('ativa'));
-    event.target.classList.add('ativa');
-    carregarCatalogo(cat);
-};
+document.getElementById('biparVenda').addEventListener('change', (e) => { add(e.target.value); e.target.value = ""; });
+window.finalizarVenda = () => { window.print(); carrinho = []; render(); };
+window.onload = () => carregar('TUDO');
