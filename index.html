@@ -9,43 +9,52 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
     <style>
-        :root { --verde: #1fcc7d; --bg: #0d0d0d; --card: #1a1a1a; --texto: #ffffff; --amarelo: #ffcc00; }
-        body { margin: 0; background: var(--bg); color: var(--texto); font-family: sans-serif; overflow: hidden; }
-        .pdv-layout { display: grid; grid-template-columns: 1fr 380px; height: 100vh; padding: 15px; gap: 15px; box-sizing: border-box; }
+        :root { --verde: #1fcc7d; --bg: #0d0d0d; --card: #1a1a1a; --texto: #ffffff; --amarelo: #ffcc00; --danger: #ff4444; }
+        body { margin: 0; background: var(--bg); color: var(--texto); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; }
         
-        /* Cupom */
-        .area-cupom { background: #fff; color: #333; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; overflow: hidden; position: relative; }
-        .cabecalho-loja { text-align: center; border-bottom: 2px dashed #ddd; margin-bottom: 10px; }
-        .cabecalho-loja h1 { margin: 0; font-size: 24px; color: #000; }
+        .pdv-layout { display: grid; grid-template-columns: 1fr 400px; height: 100vh; padding: 15px; gap: 15px; box-sizing: border-box; }
+        
+        /* Área do Cupom (Esquerda) */
+        .area-cupom { background: #fff; color: #333; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .cabecalho-loja { text-align: center; border-bottom: 2px dashed #ddd; margin-bottom: 10px; padding-bottom: 10px; }
+        .cabecalho-loja h1 { margin: 0; font-size: 28px; color: #000; letter-spacing: -1px; }
         .tabela-venda { flex-grow: 1; overflow-y: auto; }
         table { width: 100%; border-collapse: collapse; }
-        td { padding: 10px 5px; border-bottom: 1px solid #f0f0f0; font-weight: 600; font-size: 14px; }
-        .img-tabela { width: 40px; height: 40px; object-fit: cover; border-radius: 5px; }
-        .painel-total { background: #000; color: var(--verde); padding: 15px; border-radius: 15px; text-align: right; margin-top: 10px; }
-        .painel-total span { font-size: 40px; font-weight: 900; }
+        th { font-size: 11px; color: #888; text-transform: uppercase; padding-bottom: 10px; }
+        td { padding: 8px 5px; border-bottom: 1px solid #f5f5f5; font-weight: 600; font-size: 14px; }
+        .img-tabela { width: 45px; height: 45px; object-fit: cover; border-radius: 8px; background: #eee; }
 
-        /* Comandos e Vitrine */
-        .area-comandos { display: flex; flex-direction: column; gap: 10px; height: 100%; overflow: hidden; }
-        .card-comando { background: var(--card); padding: 12px; border-radius: 10px; border: 1px solid #333; }
-        .titulo-secao { font-size: 10px; font-weight: bold; color: var(--verde); margin-bottom: 5px; text-transform: uppercase; }
-        #biparVenda, .input-moderno { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        .btn-finalizar { background: var(--verde); color: #000; border: none; padding: 18px; font-weight: bold; font-size: 18px; border-radius: 12px; cursor: pointer; }
+        .painel-total { background: #000; color: var(--verde); padding: 20px; border-radius: 15px; text-align: right; margin-top: 10px; }
+        .painel-total span { font-size: 48px; font-weight: 900; }
 
-        /* Vitrine de Produtos */
-        .container-categorias { background: var(--card); border-radius: 10px; padding: 10px; border: 1px solid #333; flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .vitrine-scroll { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; overflow-y: auto; padding-right: 5px; }
-        .card-vitrine { background: #111; padding: 8px; border-radius: 8px; border: 1px solid #222; text-align: center; cursor: pointer; transition: 0.2s; }
-        .card-vitrine:hover { border-color: var(--verde); }
-        .img-vitrine { width: 100%; height: 60px; object-fit: cover; border-radius: 4px; margin-bottom: 5px; }
+        /* Área de Comandos (Direita) */
+        .area-comandos { display: flex; flex-direction: column; gap: 12px; height: 100%; overflow: hidden; }
+        .card-comando { background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid #333; }
+        .titulo-secao { font-size: 11px; font-weight: bold; color: var(--verde); margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center; gap: 5px; }
+        
+        #biparVenda, .input-moderno { width: 100%; padding: 15px; background: #000; border: 1px solid #444; color: #fff; border-radius: 10px; box-sizing: border-box; font-size: 18px; outline: none; }
+        #biparVenda:focus { border-color: var(--verde); }
 
-        /* PLAYER DE RÁDIO INTEGRADO */
-        .player-integrado { background: #000; border: 1px solid var(--amarelo); border-radius: 12px; padding: 10px; display: flex; align-items: center; gap: 10px; margin-top: 5px; }
-        .player-integrado select { background: #222; color: var(--amarelo); border: 1px solid #444; font-size: 11px; padding: 5px; flex-grow: 1; border-radius: 5px; outline: none; }
-        .btn-play-radio { background: var(--amarelo); border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
-        .btn-play-radio:active { transform: scale(0.9); }
+        /* Player de Rádio */
+        .player-integrado { background: #000; border: 1px solid var(--amarelo); border-radius: 12px; padding: 10px; display: flex; align-items: center; gap: 10px; }
+        .player-integrado select { background: #222; color: var(--amarelo); border: 1px solid #444; font-size: 13px; padding: 8px; flex-grow: 1; border-radius: 6px; outline: none; }
+        .btn-play-radio { background: var(--amarelo); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
 
-        /* Modais e Botão Config */
-        .btn-config-flutuante { position: fixed; bottom: 20px; left: 20px; background: #000; color: var(--verde); border: 1px solid var(--verde); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; z-index: 100; }
+        /* Vitrine de Produtos Compacta */
+        .container-vitrine { background: var(--card); border-radius: 12px; padding: 15px; border: 1px solid #333; flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .vitrine-scroll { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; overflow-y: auto; padding-right: 5px; }
+        .card-produto { background: #111; padding: 10px; border-radius: 10px; border: 1px solid #222; text-align: center; cursor: pointer; transition: 0.2s; }
+        .card-produto:hover { border-color: var(--verde); transform: translateY(-2px); }
+        .img-produto { width: 100%; height: 70px; object-fit: cover; border-radius: 6px; margin-bottom: 8px; }
+        .nome-prod { font-size: 12px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .preco-prod { color: var(--verde); font-size: 14px; font-weight: 800; margin-top: 4px; }
+
+        .btn-finalizar { background: var(--verde); color: #000; border: none; padding: 20px; font-weight: bold; font-size: 20px; border-radius: 15px; cursor: pointer; transition: 0.3s; }
+        .btn-finalizar:hover { filter: brightness(1.1); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -54,16 +63,16 @@
         <main class="area-cupom">
             <div class="cabecalho-loja">
                 <h1>BOTECO 934</h1>
-                <p>PETROLINA - PE</p>
+                <p style="margin: 0; font-size: 12px; color: #999;">PETROLINA - PE | PDV OFICIAL</p>
             </div>
             <div class="tabela-venda">
                 <table>
                     <thead>
-                        <tr style="border-bottom: 1px solid #eee">
-                            <th align="left">FOTO</th>
-                            <th align="left">PRODUTO</th>
-                            <th align="center">QTD</th>
-                            <th align="right">TOTAL</th>
+                        <tr>
+                            <th align="left">Item</th>
+                            <th align="left">Descrição</th>
+                            <th align="center">Qtd</th>
+                            <th align="right">Subtotal</th>
                         </tr>
                     </thead>
                     <tbody id="corpo-carrinho">
@@ -71,64 +80,64 @@
                 </table>
             </div>
             <div class="painel-total">
-                <div style="font-size: 12px;">TOTAL A PAGAR</div>
+                <div style="font-size: 14px; font-weight: bold;">TOTAL DO CUPOM</div>
                 R$ <span id="total-venda-valor">0,00</span>
             </div>
         </main>
 
         <aside class="area-comandos">
             <div class="card-comando">
-                <p class="titulo-secao">ENTRADA (BARCODE)</p>
-                <input type="text" id="biparVenda" placeholder="Bipe aqui..." autofocus>
+                <p class="titulo-secao">🔍 Entrada de Produto (EAN)</p>
+                <input type="text" id="biparVenda" placeholder="Bipe o código..." autofocus>
             </div>
 
             <div class="card-comando" style="border-color: var(--amarelo);">
-                <p class="titulo-secao" style="color: var(--amarelo);">📻 SOM AMBIENTE</p>
+                <p class="titulo-secao" style="color: var(--amarelo);">📻 Rádio Boteco</p>
                 <div class="player-integrado">
                     <select id="select-radio">
-                        <option value="">Carregando rádios...</option>
+                        <option value="">Carregando estações...</option>
                     </select>
                     <button id="btn-play-radio" class="btn-play-radio">▶</button>
                 </div>
                 <audio id="audio-player"></audio>
             </div>
 
+            <div class="container-vitrine">
+                <p class="titulo-secao">⚡ Mais Vendidos</p>
+                <div id="vitrine-produtos" class="vitrine-scroll">
+                    </div>
+            </div>
+
             <div class="card-comando">
-                <p class="titulo-secao">PAGAMENTO</p>
+                <p class="titulo-secao">💳 Forma de Recebimento</p>
                 <select id="metodoPagamento" class="input-moderno">
-                    <option value="Pix">📱 PIX</option>
-                    <option value="Dinheiro">💵 DINHEIRO</option>
-                    <option value="Cartão">💳 CARTÃO</option>
+                    <option value="Pix">PIX (INSTANTÂNEO)</option>
+                    <option value="Dinheiro">DINHEIRO (ESPÉCIE)</option>
+                    <option value="Cartão">CARTÃO (DÉBITO/CRÉDITO)</option>
                 </select>
             </div>
 
             <button class="btn-finalizar" onclick="finalizarVenda()">CONCLUIR VENDA 🍻</button>
-
-            <div class="container-categorias">
-                <p class="titulo-secao">PRODUTOS RÁPIDOS</p>
-                <div id="vitrine-produtos" class="vitrine-scroll">
-                    </div>
-            </div>
         </aside>
     </div>
 
-    <button class="btn-config-flutuante">⚙️</button>
-
     <script>
+        // --- CONFIGURAÇÃO FIREBASE ---
         const firebaseConfig = {
             databaseURL: "https://boteco934-music-default-rtdb.firebaseio.com",
             projectId: "boteco934-music"
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+
+        // --- SISTEMA DE RÁDIO ---
         const audioPlayer = document.getElementById('audio-player');
         const btnPlay = document.getElementById('btn-play-radio');
         const selectRadio = document.getElementById('select-radio');
 
-        // Carrega rádios do Firebase
         db.ref('radios').on('value', (snapshot) => {
             const data = snapshot.val();
-            selectRadio.innerHTML = '<option value="">-- Escolha o Som --</option>';
+            selectRadio.innerHTML = '<option value="">-- Selecione a Rádio --</option>';
             if (data) {
                 Object.keys(data).forEach(key => {
                     let opt = document.createElement('option');
@@ -139,39 +148,90 @@
             }
         });
 
-        // Função para trocar de rádio
         selectRadio.addEventListener('change', function() {
-            const url = this.value;
-            if (!url) {
-                audioPlayer.pause();
-                audioPlayer.src = "";
-                btnPlay.innerText = "▶";
-                return;
-            }
-            audioPlayer.src = url;
-            audioPlayer.load(); // Importante para streaming
-            audioPlayer.play().then(() => {
-                btnPlay.innerText = "⏸";
-            }).catch(e => console.log("Play bloqueado pelo navegador. Clique no botão."));
+            if (!this.value) return;
+            audioPlayer.src = this.value;
+            audioPlayer.load();
+            audioPlayer.play().then(() => btnPlay.innerText = "⏸")
+            .catch(() => btnPlay.innerText = "▶");
         });
 
-        // Função do botão Play/Pause
-        btnPlay.addEventListener('click', function() {
-            if (!audioPlayer.src && selectRadio.value) {
-                audioPlayer.src = selectRadio.value;
-                audioPlayer.load();
-            }
-
+        btnPlay.addEventListener('click', () => {
             if (audioPlayer.paused) {
+                if(!audioPlayer.src && selectRadio.value) audioPlayer.src = selectRadio.value;
                 audioPlayer.play();
-                this.innerText = "⏸";
+                btnPlay.innerText = "⏸";
             } else {
                 audioPlayer.pause();
-                this.innerText = "▶";
+                btnPlay.innerText = "▶";
             }
         });
-    </script>
 
-    <script type="module" src="app.js"></script>
+        // --- LÓGICA DO PDV (CARRINHO E PRODUTOS) ---
+        let carrinho = [];
+        let totalGeral = 0;
+
+        // Exemplo de Banco de Dados de Produtos (Isso pode vir do Firebase também)
+        const produtosDB = [
+            { id: 1, ean: "789123", nome: "Cerveja Heineken 600ml", preco: 15.00, img: "https://images.tcdn.com.br/img/img_prod/735694/cerveja_heineken_600ml_267_1_20200722152342.jpg" },
+            { id: 2, ean: "789456", nome: "Coca-Cola Lata 350ml", preco: 5.50, img: "https://static.paodeacucar.com/img/uploads/1/562/24035562.png" },
+            { id: 3, ean: "789789", nome: "Espetinho de Carne", preco: 10.00, img: "https://www.receiteria.com.br/wp-content/uploads/espetinho-de-carne-0.jpg" }
+        ];
+
+        function renderizarVitrine() {
+            const vitrine = document.getElementById('vitrine-produtos');
+            vitrine.innerHTML = produtosDB.map(p => `
+                <div class="card-produto" onclick="adicionarAoCarrinho('${p.ean}')">
+                    <img src="${p.img}" class="img-produto">
+                    <div class="nome-prod">${p.nome}</div>
+                    <div class="preco-prod">R$ ${p.preco.toFixed(2)}</div>
+                </div>
+            `).join('');
+        }
+
+        function adicionarAoCarrinho(codigo) {
+            const produto = produtosDB.find(p => p.ean === codigo);
+            if (produto) {
+                carrinho.push(produto);
+                atualizarTabela();
+            }
+        }
+
+        function atualizarTabela() {
+            const corpo = document.getElementById('corpo-carrinho');
+            totalGeral = 0;
+            corpo.innerHTML = carrinho.map((p, index) => {
+                totalGeral += p.preco;
+                return `
+                    <tr>
+                        <td><img src="${p.img}" class="img-tabela"></td>
+                        <td>${p.nome}</td>
+                        <td align="center">1</td>
+                        <td align="right">R$ ${p.preco.toFixed(2)}</td>
+                    </tr>
+                `;
+            }).join('');
+            document.getElementById('total-venda-valor').innerText = totalGeral.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+        }
+
+        // Evento do Barcode
+        document.getElementById('biparVenda').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                adicionarAoCarrinho(e.target.value);
+                e.target.value = "";
+            }
+        });
+
+        function finalizarVenda() {
+            if (carrinho.length === 0) return alert("Carrinho vazio!");
+            const pag = document.getElementById('metodoPagamento').value;
+            alert(`Venda finalizada via ${pag}!\nTotal: R$ ${totalGeral.toFixed(2)}`);
+            carrinho = [];
+            atualizarTabela();
+        }
+
+        // Iniciar
+        renderizarVitrine();
+    </script>
 </body>
 </html>
