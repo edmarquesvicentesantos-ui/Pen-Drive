@@ -3,14 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boteco 934 | PDV Pro</title>
+    <title>Boteco 934 | PDV Pro + Rádio</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
     <style>
-        :root { --verde: #1fcc7d; --bg: #0d0d0d; --card: #1a1a1a; --texto: #ffffff; }
+        :root { --verde: #1fcc7d; --bg: #0d0d0d; --card: #1a1a1a; --texto: #ffffff; --amarelo: #ffcc00; }
         body { margin: 0; background: var(--bg); color: var(--texto); font-family: sans-serif; overflow: hidden; }
         .pdv-layout { display: grid; grid-template-columns: 1fr 380px; height: 100vh; padding: 15px; gap: 15px; box-sizing: border-box; }
         
         /* Cupom */
-        .area-cupom { background: #fff; color: #333; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; overflow: hidden; }
+        .area-cupom { background: #fff; color: #333; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; overflow: hidden; position: relative; }
         .cabecalho-loja { text-align: center; border-bottom: 2px dashed #ddd; margin-bottom: 10px; }
         .cabecalho-loja h1 { margin: 0; font-size: 24px; color: #000; }
         .tabela-venda { flex-grow: 1; overflow-y: auto; }
@@ -20,28 +24,28 @@
         .painel-total { background: #000; color: var(--verde); padding: 15px; border-radius: 15px; text-align: right; margin-top: 10px; }
         .painel-total span { font-size: 40px; font-weight: 900; }
 
-        /* Comandos */
+        /* Comandos e Vitrine */
         .area-comandos { display: flex; flex-direction: column; gap: 10px; height: 100%; overflow: hidden; }
         .card-comando { background: var(--card); padding: 12px; border-radius: 10px; border: 1px solid #333; }
         .titulo-secao { font-size: 10px; font-weight: bold; color: var(--verde); margin-bottom: 5px; text-transform: uppercase; }
         #biparVenda, .input-moderno { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
         .btn-finalizar { background: var(--verde); color: #000; border: none; padding: 18px; font-weight: bold; font-size: 18px; border-radius: 12px; cursor: pointer; }
 
-        /* Vitrine A-Z */
+        /* Vitrine */
         .container-categorias { background: var(--card); border-radius: 10px; padding: 10px; border: 1px solid #333; flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .filtro-abas { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
-        .aba-filtro { flex: 1 1 30%; padding: 8px; background: #222; border: 1px solid #444; color: #fff; border-radius: 5px; cursor: pointer; font-size: 9px; font-weight: bold; text-transform: uppercase; }
-        .aba-filtro.ativa { background: var(--verde); color: #000; }
         .vitrine-scroll { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; overflow-y: auto; padding-right: 5px; }
         .card-vitrine { background: #111; padding: 8px; border-radius: 8px; border: 1px solid #222; text-align: center; cursor: pointer; }
         .img-vitrine { width: 100%; height: 60px; object-fit: cover; border-radius: 4px; margin-bottom: 5px; }
 
-        /* Gestão */
-        .btn-config-flutuante { position: fixed; bottom: 20px; right: 20px; background: #000; color: var(--verde); border: 1px solid var(--verde); width: 50px; height: 50px; border-radius: 50%; cursor: pointer; z-index: 100; font-size: 20px; }
+        /* PLAYER DE RÁDIO INTEGRADO */
+        .player-integrado { background: #000; border: 1px solid var(--amarelo); border-radius: 12px; padding: 10px; display: flex; align-items: center; gap: 10px; margin-top: 5px; }
+        .player-integrado select { background: #222; color: var(--amarelo); border: 1px solid #444; font-size: 11px; padding: 5px; flex-grow: 1; border-radius: 5px; }
+        .btn-play-radio { background: var(--amarelo); border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-weight: bold; }
+
+        /* Modais */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 2000; }
-        .modal-card { background: #111; padding: 25px; border-radius: 15px; width: 380px; border: 1px solid #333; max-height: 90vh; overflow-y: auto; }
-        .modal-card input, .modal-card select { width: 100%; padding: 10px; margin-bottom: 10px; background: #000; border: 1px solid #444; color: #fff; border-radius: 5px; box-sizing: border-box; }
-        .btn-salvar-prod { width: 100%; background: var(--verde); border: none; padding: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; }
+        .modal-card { background: #111; padding: 25px; border-radius: 15px; width: 380px; border: 1px solid #333; }
+        .btn-config-flutuante { position: fixed; bottom: 20px; left: 20px; background: #000; color: var(--verde); border: 1px solid var(--verde); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; z-index: 100; }
     </style>
 </head>
 <body>
@@ -77,67 +81,72 @@
                 <input type="text" id="biparVenda" placeholder="Bipe aqui..." autofocus>
             </div>
 
+            <div class="card-comando" style="border-color: var(--amarelo);">
+                <p class="titulo-secao" style="color: var(--amarelo);">📻 SOM AMBIENTE</p>
+                <div class="player-integrado">
+                    <select id="select-radio" onchange="trocarRadio(this.value)">
+                        <option value="">Carregando rádios...</option>
+                    </select>
+                    <button id="btn-play-radio" class="btn-play-radio" onclick="togglePlay()">▶</button>
+                </div>
+                <audio id="audio-player"></audio>
+            </div>
+
             <div class="card-comando">
                 <p class="titulo-secao">PAGAMENTO</p>
                 <select id="metodoPagamento" class="input-moderno">
                     <option value="Pix">📱 PIX</option>
                     <option value="Dinheiro">💵 DINHEIRO</option>
                     <option value="Cartão">💳 CARTÃO</option>
-                    <option value="Pendura">📝 PENDURA</option>
                 </select>
             </div>
 
             <button class="btn-finalizar" onclick="finalizarVenda()">CONCLUIR VENDA 🍻</button>
 
             <div class="container-categorias">
-                <div class="filtro-abas">
-                    <button class="aba-filtro ativa" onclick="window.filtrar('TUDO', this)">TUDO</button>
-                    <button class="aba-filtro" onclick="window.filtrar('CERVEJAS', this)">CERVEJAS</button>
-                    <button class="aba-filtro" onclick="window.filtrar('REFRIGERANTES', this)">REFRI</button>
-                    <button class="aba-filtro" onclick="window.filtrar('REFEICOES', this)">REFEIÇÕES</button>
-                    <button class="aba-filtro" onclick="window.filtrar('PETISCOS', this)">PETISCOS</button>
-                    <button class="aba-filtro" onclick="window.filtrar('BOTICARIO', this)">BOTICÁRIO</button>
-                </div>
                 <div id="vitrine-produtos" class="vitrine-scroll"></div>
             </div>
         </aside>
     </div>
 
-    <button class="btn-config-flutuante" onclick="window.abrirModal()">⚙️</button>
+    <button class="btn-config-flutuante" onclick="abrirModal()">⚙️</button>
 
-    <div id="modalCadastro" class="modal-overlay">
-        <div class="modal-card">
-            <h3 style="color:var(--verde); margin-top:0">CADASTRAR PRODUTO</h3>
-            <input type="text" id="cadCodigo" placeholder="Código de Barras">
-            <input type="text" id="cadNome" placeholder="Nome do Produto">
-            <input type="text" id="cadFoto" placeholder="Link da Imagem">
-            
-            <p class="titulo-secao">CATEGORIA</p>
-            <select id="cadCategoria">
-                <option value="CERVEJAS">CERVEJAS</option>
-                <option value="REFRIGERANTES">REFRIGERANTES</option>
-                <option value="REFEICOES">REFEIÇÕES</option>
-                <option value="PETISCOS">PETISCOS</option>
-                <option value="BOTICARIO">BOTICÁRIO</option>
-            </select>
+    <script>
+        const firebaseConfig = {
+            databaseURL: "https://boteco934-music-default-rtdb.firebaseio.com",
+            projectId: "boteco934-music"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const audioPlayer = document.getElementById('audio-player');
 
-            <div style="background:#000; padding:10px; border-radius:8px; border:1px solid var(--verde); margin-bottom:10px">
-                <p style="font-size:10px; color:var(--verde); margin:0 0 5px 0">CALCULADORA DE FARDO</p>
-                <div style="display:flex; gap:5px">
-                    <input type="number" id="calcPreco" placeholder="Preço Fardo" oninput="window.calcular()">
-                    <input type="number" id="calcQtd" placeholder="Qtd Itens" oninput="window.calcular()">
-                </div>
-            </div>
+        // Carregar rádios da sua planilha/Firebase
+        db.ref('radios').on('value', (snapshot) => {
+            const data = snapshot.val();
+            const select = document.getElementById('select-radio');
+            select.innerHTML = '<option value="">-- Escolha o Som --</option>';
+            if (data) {
+                Object.keys(data).forEach(key => {
+                    let opt = document.createElement('option');
+                    opt.value = data[key].url; // Use os links como https://servidor39.brlogic.com:8300/live
+                    opt.innerHTML = data[key].nome;
+                    select.appendChild(opt);
+                });
+            }
+        });
 
-            <div style="display:flex; gap:5px">
-                <input type="number" id="cadCustoUn" placeholder="Custo Un." readonly style="background:#222">
-                <input type="number" id="cadPreco" placeholder="Preço Venda">
-            </div>
+        function trocarRadio(url) {
+            if (!url) return;
+            audioPlayer.src = url;
+            audioPlayer.play();
+            document.getElementById('btn-play-radio').innerText = "⏸";
+        }
 
-            <button class="btn-salvar-prod" onclick="window.salvarNovoProduto()">SALVAR AGORA</button>
-            <button onclick="window.fecharModal()" style="width:100%; background:none; border:none; color:#888; margin-top:10px; cursor:pointer">FECHAR</button>
-        </div>
-    </div>
+        function togglePlay() {
+            if (audioPlayer.paused) { audioPlayer.play(); document.getElementById('btn-play-radio').innerText = "⏸"; }
+            else { audioPlayer.pause(); document.getElementById('btn-play-radio').innerText = "▶"; }
+        }
+    </script>
 
     <script type="module" src="app.js"></script>
 </body>
