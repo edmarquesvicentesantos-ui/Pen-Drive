@@ -1,105 +1,115 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-const firebaseConfig = {
-    apiKey: "AIzaSyAZf_RpFnTCS3DxqKIxpK7CEh5aTrLMEs4",
-    authDomain: "boteco934-afc3f.firebaseapp.com",
-    projectId: "boteco934-afc3f",
-    storageBucket: "boteco934-afc3f.appspot.com",
-    messagingSenderId: "182023728304",
-    appId: "1:182023728304:web:e716c52a0d91b192727ae6"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-let carrinho = [];
-
-window.abrirModal = () => document.getElementById('modalCadastro').style.display = 'flex';
-window.fecharModal = () => document.getElementById('modalCadastro').style.display = 'none';
-
-window.calcular = () => {
-    const p = parseFloat(document.getElementById('calcPreco').value) || 0;
-    const q = parseFloat(document.getElementById('calcQtd').value) || 0;
-    if(q > 0) document.getElementById('cadCustoUn').value = (p/q).toFixed(2);
-};
-
-window.salvarNovoProduto = async () => {
-    const prod = {
-        codigo: document.getElementById('cadCodigo').value,
-        nome: document.getElementById('cadNome').value.toUpperCase(),
-        foto: document.getElementById('cadFoto').value,
-        categoria: document.getElementById('cadCategoria').value,
-        custoUn: parseFloat(document.getElementById('cadCustoUn').value) || 0,
-        precoVenda: parseFloat(document.getElementById('cadPreco').value) || 0
+<script>
+    // --- CONFIGURAÇÃO FIREBASE ---
+    const firebaseConfig = {
+        databaseURL: "https://boteco934-music-default-rtdb.firebaseio.com",
+        projectId: "boteco934-music"
     };
-    try {
-        await addDoc(collection(db, "estoque"), prod);
-        alert("✅ Produto cadastrado!");
-        window.fecharModal();
-        window.carregar('TUDO');
-    } catch (e) { alert("Erro: " + e); }
-};
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-window.carregar = async (cat) => {
-    const vitrine = document.getElementById('vitrine-produtos');
-    const snap = await getDocs(collection(db, "estoque"));
-    let lista = [];
-    
-    snap.forEach(doc => {
-        const p = doc.data();
-        if(cat === 'TUDO' || p.categoria === cat) lista.push(p);
+    const audioPlayer = document.getElementById('audio-player');
+    const btnPlay = document.getElementById('btn-play-radio');
+    const selectRadio = document.getElementById('select-radio');
+
+    // --- CARREGAR RÁDIOS (VERSÃO BLINDADA) ---
+    db.ref('radios').on('value', (snapshot) => {
+        const data = snapshot.val();
+        selectRadio.innerHTML = '<option value="">-- Selecione a Rádio --</option>';
+        
+        if (data) {
+            Object.keys(data).forEach(key => {
+                const item = data[key];
+                // Tenta encontrar o nome e a URL de várias formas para evitar o "undefined"
+                const nomeFinal = item.nome || item.Nome || item.radio || "Rádio " + key;
+                const urlFinal = item.url || item.URL || item.link || item.Link;
+
+                if (urlFinal) {
+                    let opt = document.createElement('option');
+                    opt.value = urlFinal;
+                    opt.innerHTML = nomeFinal;
+                    selectRadio.appendChild(opt);
+                }
+            });
+        }
     });
 
-    // Ordenação A-Z
-    lista.sort((a, b) => a.nome.localeCompare(b.nome));
+    // --- LOGICA DE TROCA DE ESTAÇÃO ---
+    selectRadio.addEventListener('change', function() {
+        if (!this.value) return;
+        
+        audioPlayer.pause();
+        audioPlayer.src = this.value;
+        audioPlayer.load(); // Força o carregamento do streaming
 
-    vitrine.innerHTML = lista.map(p => `
-        <div class="card-vitrine" onclick="window.add('${p.codigo}')">
-            <img src="${p.foto}" class="img-vitrine" onerror="this.src='https://via.placeholder.com/60'">
-            <div style="font-size:9px; color:#fff; font-weight:bold; text-transform:uppercase">${p.nome}</div>
-            <div style="font-size:10px; color:#1fcc7d">R$ ${p.precoVenda.toFixed(2)}</div>
-        </div>
-    `).join('');
-};
+        // Tenta dar play automaticamente
+        audioPlayer.play().then(() => {
+            btnPlay.innerText = "⏸";
+        }).catch(() => {
+            console.log("Clique no play manualmente");
+            btnPlay.innerText = "▶";
+        });
+    });
 
-window.filtrar = (cat, btn) => {
-    document.querySelectorAll('.aba-filtro').forEach(b => b.classList.remove('ativa'));
-    btn.classList.add('ativa');
-    window.carregar(cat);
-};
+    btnPlay.addEventListener('click', () => {
+        if (audioPlayer.paused) {
+            if(!audioPlayer.src && selectRadio.value) audioPlayer.src = selectRadio.value;
+            audioPlayer.play();
+            btnPlay.innerText = "⏸";
+        } else {
+            audioPlayer.pause();
+            btnPlay.innerText = "▶";
+        }
+    });
 
-window.add = async (cod) => {
-    const q = query(collection(db, "estoque"), where("codigo", "==", cod));
-    const snap = await getDocs(q);
-    if(!snap.empty) {
-        carrinho.push(snap.docs[0].data());
-        render();
+    // --- LÓGICA DO PDV ---
+    let carrinho = [];
+    let totalGeral = 0;
+
+    // Exemplo de banco de produtos (Ajuste os links das imagens aqui)
+    const produtosDB = [
+        { ean: "789123", nome: "Cerveja Heineken 600ml", preco: 15.00, img: "https://images.tcdn.com.br/img/img_prod/735694/cerveja_heineken_600ml_267_1_20200722152342.jpg" },
+        { ean: "789456", nome: "Coca-Cola Lata 350ml", preco: 5.50, img: "https://m.media-amazon.com/images/I/51v8nyS19vL._AC_SL1000_.jpg" }
+    ];
+
+    function renderizarVitrine() {
+        const vitrine = document.getElementById('vitrine-produtos');
+        vitrine.innerHTML = produtosDB.map(p => `
+            <div class="card-produto" onclick="adicionarAoCarrinho('${p.ean}')">
+                <img src="${p.img}" class="img-produto" onerror="this.src='https://via.placeholder.com/70?text=Sem+Foto'">
+                <div class="nome-prod">${p.nome}</div>
+                <div class="preco-prod">R$ ${p.preco.toFixed(2)}</div>
+            </div>
+        `).join('');
     }
-};
 
-function render() {
-    document.getElementById('corpo-carrinho').innerHTML = carrinho.map(i => `
-        <tr>
-            <td><img src="${i.foto}" class="img-tabela"></td>
-            <td>${i.nome}</td>
-            <td align="center">1</td>
-            <td align="right">R$ ${i.precoVenda.toFixed(2)}</td>
-        </tr>
-    `).join('');
-    const total = carrinho.reduce((a, b) => a + b.precoVenda, 0);
-    document.getElementById('total-venda-valor').innerText = total.toFixed(2);
-}
+    function adicionarAoCarrinho(codigo) {
+        const produto = produtosDB.find(p => p.ean === codigo);
+        if (produto) {
+            carrinho.push(produto);
+            atualizarTabela();
+        }
+    }
 
-document.getElementById('biparVenda').addEventListener('change', (e) => { 
-    window.add(e.target.value); 
-    e.target.value = ""; 
-});
+    function atualizarTabela() {
+        const corpo = document.getElementById('corpo-carrinho');
+        totalGeral = 0;
+        corpo.innerHTML = carrinho.map((p) => {
+            totalGeral += p.preco;
+            return `<tr><td><img src="${p.img}" class="img-tabela"></td><td>${p.nome}</td><td align="center">1</td><td align="right">R$ ${p.preco.toFixed(2)}</td></tr>`;
+        }).join('');
+        document.getElementById('total-venda-valor').innerText = totalGeral.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+    }
 
-window.finalizarVenda = () => {
-    if(carrinho.length === 0) return;
-    window.print();
-    carrinho = [];
-    render();
-};
+    document.getElementById('biparVenda').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') { adicionarAoCarrinho(e.target.value); e.target.value = ""; }
+    });
 
-window.onload = () => window.carregar('TUDO');
+    function finalizarVenda() {
+        if (carrinho.length === 0) return alert("Carrinho vazio!");
+        alert(`Venda finalizada! Total: R$ ${totalGeral.toFixed(2)}`);
+        carrinho = [];
+        atualizarTabela();
+    }
+
+    renderizarVitrine();
+</script>
