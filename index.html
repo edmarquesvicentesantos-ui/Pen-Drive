@@ -221,7 +221,29 @@
                 e.target.value = "";
             }
         });
+// Substitua o evento de troca de rádio por este:
+selectRadio.addEventListener('change', function() {
+    const url = this.value;
+    if (!url) return;
 
+    // 1. Limpa qualquer erro anterior
+    audioPlayer.pause();
+    audioPlayer.removeAttribute('src'); 
+    audioPlayer.load();
+
+    // 2. Define o novo link
+    audioPlayer.src = url;
+    
+    // 3. Tenta tocar com um pequeno atraso para o navegador aceitar
+    setTimeout(() => {
+        audioPlayer.play()
+            .then(() => btnPlay.innerText = "⏸")
+            .catch(e => {
+                console.log("Aguardando clique do usuário...");
+                btnPlay.innerText = "▶";
+            });
+    }, 200); 
+});
         function finalizarVenda() {
             if (carrinho.length === 0) return alert("Carrinho vazio!");
             const pag = document.getElementById('metodoPagamento').value;
