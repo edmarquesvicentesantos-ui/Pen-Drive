@@ -31,20 +31,20 @@
         #biparVenda, .input-moderno { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
         .btn-finalizar { background: var(--verde); color: #000; border: none; padding: 18px; font-weight: bold; font-size: 18px; border-radius: 12px; cursor: pointer; }
 
-        /* Vitrine */
+        /* Vitrine de Produtos */
         .container-categorias { background: var(--card); border-radius: 10px; padding: 10px; border: 1px solid #333; flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
         .vitrine-scroll { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; overflow-y: auto; padding-right: 5px; }
-        .card-vitrine { background: #111; padding: 8px; border-radius: 8px; border: 1px solid #222; text-align: center; cursor: pointer; }
+        .card-vitrine { background: #111; padding: 8px; border-radius: 8px; border: 1px solid #222; text-align: center; cursor: pointer; transition: 0.2s; }
+        .card-vitrine:hover { border-color: var(--verde); }
         .img-vitrine { width: 100%; height: 60px; object-fit: cover; border-radius: 4px; margin-bottom: 5px; }
 
         /* PLAYER DE RÁDIO INTEGRADO */
         .player-integrado { background: #000; border: 1px solid var(--amarelo); border-radius: 12px; padding: 10px; display: flex; align-items: center; gap: 10px; margin-top: 5px; }
-        .player-integrado select { background: #222; color: var(--amarelo); border: 1px solid #444; font-size: 11px; padding: 5px; flex-grow: 1; border-radius: 5px; }
-        .btn-play-radio { background: var(--amarelo); border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-weight: bold; }
+        .player-integrado select { background: #222; color: var(--amarelo); border: 1px solid #444; font-size: 11px; padding: 5px; flex-grow: 1; border-radius: 5px; outline: none; }
+        .btn-play-radio { background: var(--amarelo); border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
+        .btn-play-radio:active { transform: scale(0.9); }
 
-        /* Modais */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 2000; }
-        .modal-card { background: #111; padding: 25px; border-radius: 15px; width: 380px; border: 1px solid #333; }
+        /* Modais e Botão Config */
         .btn-config-flutuante { position: fixed; bottom: 20px; left: 20px; background: #000; color: var(--verde); border: 1px solid var(--verde); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; z-index: 100; }
     </style>
 </head>
@@ -66,7 +66,8 @@
                             <th align="right">TOTAL</th>
                         </tr>
                     </thead>
-                    <tbody id="corpo-carrinho"></tbody>
+                    <tbody id="corpo-carrinho">
+                        </tbody>
                 </table>
             </div>
             <div class="painel-total">
@@ -77,17 +78,17 @@
 
         <aside class="area-comandos">
             <div class="card-comando">
-                <p class="titulo-secao">ENTRADA</p>
+                <p class="titulo-secao">ENTRADA (BARCODE)</p>
                 <input type="text" id="biparVenda" placeholder="Bipe aqui..." autofocus>
             </div>
 
             <div class="card-comando" style="border-color: var(--amarelo);">
                 <p class="titulo-secao" style="color: var(--amarelo);">📻 SOM AMBIENTE</p>
                 <div class="player-integrado">
-                    <select id="select-radio" onchange="trocarRadio(this.value)">
+                    <select id="select-radio">
                         <option value="">Carregando rádios...</option>
                     </select>
-                    <button id="btn-play-radio" class="btn-play-radio" onclick="togglePlay()">▶</button>
+                    <button id="btn-play-radio" class="btn-play-radio">▶</button>
                 </div>
                 <audio id="audio-player"></audio>
             </div>
@@ -104,12 +105,14 @@
             <button class="btn-finalizar" onclick="finalizarVenda()">CONCLUIR VENDA 🍻</button>
 
             <div class="container-categorias">
-                <div id="vitrine-produtos" class="vitrine-scroll"></div>
+                <p class="titulo-secao">PRODUTOS RÁPIDOS</p>
+                <div id="vitrine-produtos" class="vitrine-scroll">
+                    </div>
             </div>
         </aside>
     </div>
 
-    <button class="btn-config-flutuante" onclick="abrirModal()">⚙️</button>
+    <button class="btn-config-flutuante">⚙️</button>
 
     <script>
         const firebaseConfig = {
@@ -119,33 +122,54 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const audioPlayer = document.getElementById('audio-player');
+        const btnPlay = document.getElementById('btn-play-radio');
+        const selectRadio = document.getElementById('select-radio');
 
-        // Carregar rádios da sua planilha/Firebase
+        // Carrega rádios do Firebase
         db.ref('radios').on('value', (snapshot) => {
             const data = snapshot.val();
-            const select = document.getElementById('select-radio');
-            select.innerHTML = '<option value="">-- Escolha o Som --</option>';
+            selectRadio.innerHTML = '<option value="">-- Escolha o Som --</option>';
             if (data) {
                 Object.keys(data).forEach(key => {
                     let opt = document.createElement('option');
-                    opt.value = data[key].url; // Use os links como https://servidor39.brlogic.com:8300/live
+                    opt.value = data[key].url;
                     opt.innerHTML = data[key].nome;
-                    select.appendChild(opt);
+                    selectRadio.appendChild(opt);
                 });
             }
         });
 
-        function trocarRadio(url) {
-            if (!url) return;
+        // Função para trocar de rádio
+        selectRadio.addEventListener('change', function() {
+            const url = this.value;
+            if (!url) {
+                audioPlayer.pause();
+                audioPlayer.src = "";
+                btnPlay.innerText = "▶";
+                return;
+            }
             audioPlayer.src = url;
-            audioPlayer.play();
-            document.getElementById('btn-play-radio').innerText = "⏸";
-        }
+            audioPlayer.load(); // Importante para streaming
+            audioPlayer.play().then(() => {
+                btnPlay.innerText = "⏸";
+            }).catch(e => console.log("Play bloqueado pelo navegador. Clique no botão."));
+        });
 
-        function togglePlay() {
-            if (audioPlayer.paused) { audioPlayer.play(); document.getElementById('btn-play-radio').innerText = "⏸"; }
-            else { audioPlayer.pause(); document.getElementById('btn-play-radio').innerText = "▶"; }
-        }
+        // Função do botão Play/Pause
+        btnPlay.addEventListener('click', function() {
+            if (!audioPlayer.src && selectRadio.value) {
+                audioPlayer.src = selectRadio.value;
+                audioPlayer.load();
+            }
+
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                this.innerText = "⏸";
+            } else {
+                audioPlayer.pause();
+                this.innerText = "▶";
+            }
+        });
     </script>
 
     <script type="module" src="app.js"></script>
